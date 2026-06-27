@@ -6,7 +6,7 @@
   "description": "file://DESCRIPTION.md",
   "changelog": "file://CHANGELOG",
   "icon": "file://logo.png",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "upstreamVersion": "1.741.0",
   "healthCheckPath": "/health",
   "httpPort": 8000,
@@ -16,6 +16,11 @@
       "supportsDisplayName": true
     }
   },
+  "persistentDirs": [
+    "/app/pgdata"
+  ],
+  "backupCommand": "/app/code/backup.sh",
+  "restoreCommand": "/app/code/restore.sh",
   "manifestVersion": 2,
   "memoryLimit": 3221225472,
   "configurePath": "/",

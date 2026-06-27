@@ -45,8 +45,8 @@ RUN set -eux; \
     /usr/local/go/bin/go version; \
     /usr/lib/postgresql/16/bin/postgres --version
 
-COPY start.sh supervisord.conf nginx.conf /app/code/
-RUN chmod 0755 /app/code/start.sh
+COPY start.sh backup.sh restore.sh supervisord.conf nginx.conf /app/code/
+RUN chmod 0755 /app/code/start.sh /app/code/backup.sh /app/code/restore.sh
 
 # CMD (never ENTRYPOINT — keeps Cloudron debug mode usable).
 CMD [ "/app/code/start.sh" ]
