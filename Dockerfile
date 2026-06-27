@@ -21,14 +21,18 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Windmill binary + the language runtimes it needs, copied UNMODIFIED from the official CE image.
+# Keep deno/bun at the paths Windmill probes by default (/usr/bin/{deno,bun}); pin the rest explicitly.
 COPY --from=windmill /usr/src/app/windmill /app/code/windmill
-COPY --from=windmill /usr/bin/deno         /usr/local/bin/deno
-COPY --from=windmill /usr/bin/bun          /usr/local/bin/bun
+COPY --from=windmill /usr/bin/deno         /usr/bin/deno
+COPY --from=windmill /usr/bin/bun          /usr/bin/bun
 COPY --from=windmill /usr/local/bin/uv     /usr/local/bin/uv
 COPY --from=windmill /usr/local/go         /usr/local/go
 COPY --from=windmill /usr/bin/wmill        /usr/local/bin/wmill
 
+# Runtime path overrides Windmill reads, pinned so they never depend on PATH probing order.
 ENV GO_PATH=/usr/local/go/bin/go \
+    DENO_PATH=/usr/bin/deno \
+    BUN_PATH=/usr/bin/bun \
     PATH=/usr/local/go/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # Build-time linkage gate: the build fails here if the binary/runtimes do not resolve on the base.
