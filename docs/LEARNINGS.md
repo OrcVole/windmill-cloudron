@@ -13,6 +13,20 @@ A running log for four audiences, newest first. (a) operators, (b) other package
   nsjail sandbox do **not** (Cloudron is unprivileged). Treat it as single-tenant, trusted-author.
 - Memory default is 3 GiB (Postgres + Windmill + a worker). Raise it for heavier workloads.
 
+### (b) For other packagers — backup correctness (1.0.1)
+- **A bundled database must NOT rely on Cloudron's filesystem backup.** Cloudron copies `/app/data`
+  live and non-atomically; a hot copy of a running Postgres `PGDATA` is consistency-unsafe. Use the
+  `persistentDirs` (exclude the live data dir from the file backup) + `backupCommand`/`restoreCommand`
+  (`pg_dumpall` a logical dump into `/app/data` at backup time, rebuild on restore) trio — the
+  `minBoxVersion 9.1.0` mechanism built for exactly this. The empty persistentDir on restore is itself
+  the "this is a restore" signal, so no detection logic is needed.
+- **`backupCommand` runs in a separate temp container** (app may be live). Put the Postgres socket
+  inside the persistentDir so that temp container can dump the *live* server over the socket
+  (MVCC-consistent) instead of risking a second postmaster on the same data dir.
+- **Bundling a DB makes you the OOM and `pg_upgrade` owner**: Postgres shares the app's one memory
+  limit (set `shared_buffers`/`work_mem` low; document a floor), and a PG major bump needs an explicit
+  upgrade — guard `PG_VERSION` and fail loud rather than re-initialising over data.
+
 ### (b) For other packagers
 - **Bundled PostgreSQL was the unlock.** Windmill needs superuser-grade PG (`CREATE EXTENSION
   uuid-ossp` unguarded, `CREATE ROLE … BYPASSRLS`, runtime `SET ROLE windmill_admin`). The Cloudron

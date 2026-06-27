@@ -3,6 +3,27 @@
 The empirical log. Every assumption carried from a brief/README/reference is recorded here as
 **VERIFIED** (checked against a real build/run) or **ASSUMED** (still to confirm on the live box).
 
+## 2026-06-27 — 1.0.1: backup correctness, auth model, lifecycle
+
+- **VERIFIED (the big one)** — A hot file-copy of a running Postgres data dir is unsafe; Cloudron's
+  filesystem backup copies `/app/data` live. Moved PGDATA to a **`persistentDir`** (excluded from the
+  filesystem backup) and added **`backupCommand`/`restoreCommand`** (`pg_dumpall` logical dump, 9.1.0
+  fields). Validated locally with a temp-container simulation of Cloudron's exact lifecycle: a
+  workspace + variable survived **backup → restore onto a fresh PGDATA volume**, Postgres clean.
+- **VERIFIED** — `backupCommand` cross-container live dump works: the temp container reaches the live
+  server via the Postgres socket placed inside the shared persistentDir.
+- **VERIFIED (auth model — answers the operator's question)** — login is email/password only because
+  no OAuth/OIDC provider is configured (SSO buttons are provider-gated), and there's no self-signup
+  because Windmill is invite-only by default. Both are expected. SSO can be enabled by configuring a
+  provider (e.g. Keycloak) in Windmill instance settings; the box has a Keycloak (`master` realm
+  discovery resolves). Documented in `POSTINSTALL.md` + ADR 0006.
+- **VERIFIED** — Postgres version guard added (fail-loud on PG_VERSION mismatch; no silent re-init).
+- **ASSUMED (to verify on box)** — the on-box throwaway backup→restore-into-fresh gate (repeat 2–3×),
+  and the 1.0.1 update on the existing install (which migrates PGDATA `/app/data/postgresql` →
+  `/app/pgdata`). **Blocked**: the live box's disk hit 100% (1.1T/1.2T — a box-wide condition, not
+  this app, which uses ~71 MB), so Postgres logged "No space left on device" and the Windmill process
+  is down. The deploy of 1.0.1 + the box gate wait on the operator freeing disk.
+
 ## 2026-06-27 — Live deploy + functional validation on the box
 
 All VERIFIED on the live Cloudron (anonymized; box hostname omitted per the secret-scan gate):

@@ -30,5 +30,25 @@ within the app's own trust boundary. This is the standard single-tenant, **trust
 **Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in
 Windmill's instance settings if you prefer.
 
+**Users, login and SSO**
+
+The login page shows **email/password only** by design — there are no SSO buttons until you configure
+an OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by
+default. This is expected, not a fault.
+
+- **Add users**: as the superadmin, go to the instance settings → Users (or add members inside a
+  workspace). Optionally enable self-registration / an auto-invite email domain in the instance
+  settings.
+- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings → SSO/
+  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. — create a client in your IdP
+  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned
+  follow-up; for now configure the provider directly.)
+- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a
+  last resort, the superadmin password can be reset from the database via `cloudron exec`.
+
+**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and a worker, all under
+one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory event would take the
+database down with the app. Raise it in the dashboard (Resources) for heavier workloads.
+
 **Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.
 If you change the app's domain, update the base URL in Windmill's instance settings.
