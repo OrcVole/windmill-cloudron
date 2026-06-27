@@ -1,0 +1,8 @@
+[1.0.0]
+* Initial release of Windmill for Cloudron.
+* Windmill Community Edition 1.741.0, official binary used unmodified.
+* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.
+* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.
+* Outgoing email wired to the Cloudron sendmail addon.
+* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.
+* App-native authentication; optionalSso.

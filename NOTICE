@@ -1,0 +1,40 @@
+Windmill for Cloudron
+=====================
+
+This repository is a Cloudron packaging layer for Windmill. It does not contain Windmill's
+source code; it builds an image that runs the official, unmodified Windmill Community Edition
+binary.
+
+Packaging layer
+---------------
+The files in this repository authored for the Cloudron package (Dockerfile, start.sh,
+supervisord.conf, nginx.conf, CloudronManifest.json, scripts, and documentation) are licensed
+under the GNU Affero General Public License v3.0 — the same license as Windmill's open-source
+codebase. See the LICENSE file.
+
+Windmill (upstream)
+-------------------
+Windmill is developed by Windmill Labs, Inc. — https://github.com/windmill-labs/windmill
+Pinned here to tag v1.741.0.
+
+Windmill's source is variously licensed under the Apache License 2.0, the AGPLv3, and a
+proprietary license for certain enterprise features. The Community Edition image
+(ghcr.io/windmill-labs/windmill) and official binary releases contain the AGPLv3 and Apache-2
+sources plus proprietary, non-public code. Windmill Labs grants the right to use all Community
+Edition features for free and to distribute the Community Edition AS IS, but not to sell, resell,
+serve it as a managed service, or modify or wrap it without an explicit agreement.
+
+This package honours those terms:
+  * It distributes the Community Edition binary UNMODIFIED (copied as-is from the official image).
+  * It does NOT patch the binary, and does NOT re-enable capped or enterprise-only features.
+  * It only adapts the runtime environment to Cloudron's contract (a thin packaging layer).
+
+The Windmill name and logo are trademarks of Windmill Labs, Inc. The icon (logo.png) is the
+canonical Windmill mark, taken from the upstream repository, used to identify the application.
+
+Bundled components
+------------------
+  * PostgreSQL 16 (PostgreSQL License) — installed from Ubuntu, run inside the container.
+  * Language runtimes copied unmodified from the official Windmill CE image: Deno (MIT), Bun (MIT),
+    uv (Apache-2.0/MIT), the Go toolchain (BSD-3-Clause).
+  * cloudron/base (the platform base image).
