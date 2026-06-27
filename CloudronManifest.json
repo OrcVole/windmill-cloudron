@@ -30,6 +30,8 @@
     "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
   ],
   "checklist": {
-    "changeAdminPassword": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+    "changeAdminPassword": {
+      "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+    }
   }
 }
