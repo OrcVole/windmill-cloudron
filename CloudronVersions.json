@@ -1,0 +1,48 @@
+{
+  "stable": true,
+  "versions": {
+    "1.0.0": {
+      "manifest": {
+        "id": "io.github.orcvole.windmill",
+        "title": "Windmill",
+        "author": "OrcVole",
+        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+        "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Standalone mode** — the API server and a worker in one process, fronted by nginx.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+        "changelog": "[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
+        "icon": "file://logo.png",
+        "version": "1.0.0",
+        "upstreamVersion": "1.741.0",
+        "healthCheckPath": "/health",
+        "httpPort": 8000,
+        "addons": {
+          "localstorage": {},
+          "sendmail": {
+            "supportsDisplayName": true
+          }
+        },
+        "manifestVersion": 2,
+        "memoryLimit": 3221225472,
+        "configurePath": "/",
+        "optionalSso": true,
+        "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill (standalone: API server + one worker), a **bundled PostgreSQL 16**,\nand nginx — all managed by supervisor. Everything durable (the database, dependency caches) lives\nunder `/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+        "documentationUrl": "https://www.windmill.dev/docs/intro",
+        "website": "https://www.windmill.dev",
+        "contactEmail": "orcvole@users.noreply.github.com",
+        "minBoxVersion": "9.1.0",
+        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+        "mediaLinks": [
+          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+        ],
+        "checklist": {
+          "changeAdminPassword": {
+            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+          }
+        },
+        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:5309422254b43297854de707dae03c21100502bab858e9c2f9dfe6bdcdc3a0c4"
+      },
+      "creationDate": "2026-06-27T19:40:00.000Z",
+      "ts": 1782589200000,
+      "publishState": "published"
+    }
+  }
+}

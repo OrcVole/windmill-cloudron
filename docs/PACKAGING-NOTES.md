@@ -3,6 +3,34 @@
 The empirical log. Every assumption carried from a brief/README/reference is recorded here as
 **VERIFIED** (checked against a real build/run) or **ASSUMED** (still to confirm on the live box).
 
+## 2026-06-27 — Live deploy + functional validation on the box
+
+All VERIFIED on the live Cloudron (anonymized; box hostname omitted per the secret-scan gate):
+
+- **Install + health**: `cloudron install --image ...@sha256:...` reached healthy within the grace
+  window; public `/health` 200, `/api/version` → CE v1.741.0. First boot migrations ran on the box's
+  bundled Postgres.
+- **Auth**: default-cred superadmin login worked; then **changed the default password** (new password
+  works, `changeme` rejected 400) and set the `base_url` instance setting to the app origin.
+- **Languages run on the box**: **Python** (uv installed managed CPython 3.12.13), **TypeScript/Deno**,
+  **Go**, **Bash** — all returned correct results via `jobs/run/preview`. (SQL needs a user-configured
+  DB resource — standard Windmill, not a packaging concern.)
+- **deno path gotcha (fixed)**: Windmill probes **`/usr/bin/deno`** by default; copying deno/bun to
+  `/usr/local/bin` made TS jobs fail `Executable /usr/bin/deno not found`. Fix: place deno/bun at
+  `/usr/bin` **and** set `DENO_PATH`/`BUN_PATH`. (Go worked because `GO_PATH` was already set.)
+- **Webhook**: a saved script fired via `run_wait_result` against the **public origin** returned the
+  result — `BASE_URL` + routing correct end to end.
+- **Email**: `is_smtp_configured` → true; `test_smtp` → "Sent test email" through the Cloudron
+  `sendmail` relay (`mail:2525`, `disable_tls`). Note: Windmill runs **user jobs with a sanitized env**,
+  so `SMTP_*`/`DATABASE_URL` are intentionally NOT visible inside job code (checking `os.environ` in a
+  job is the wrong test — check the server/supervisord env).
+- **Integration (wired up)**: from a Windmill job, outbound HTTPS to every sibling (tei, qdrant,
+  docling, **bge reranker**) returned 200; a **real rerank** call to the bge reranker
+  (`BAAI/bge-reranker-v2-m3`, `/rerank`, Bearer key) ranked the relevant passage top (0.9999).
+- **Update path (Phase 7)**: `cloudron update` to a new image digest **auto-backed-up first** (the
+  snapshot included `data/postgresql/16/...` — confirming the bundled PG rides Cloudron backups),
+  applied cleanly, and the `demo` workspace + data **persisted** across the update.
+
 ## 2026-06-27 — Local build + Cloudron-style run
 
 - **VERIFIED** — Image builds on `cloudron/base:5.0.0`; linkage gate green. Windmill v1.741.0 binary's

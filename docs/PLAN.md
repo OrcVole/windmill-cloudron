@@ -11,13 +11,13 @@ Refined from the foundation brief after Phase 0 ground-truthing. Effort tags per
 | 1 Architecture & ADRs (0001–0006) | ✅ done |
 | 2 Package skeleton (Dockerfile/start/supervisor/nginx/manifest/icon/docs) | ✅ done |
 | 3 Local build + smoke | ✅ done — smoke gate green |
-| 4 Deploy to live Cloudron + functional validation | ⏳ in progress |
-| 5 Integration with sibling AI apps (incl. bge reranker) | ⏳ pending |
-| 6 Backup / restore | ⏳ pending |
-| 7 Update / upgrade path | ⏳ pending |
-| 8 Hardening & compliance review | ⏳ pending |
-| 9 Docs, release, `CloudronVersions.json`, push to GitHub + Forgejo | ⏳ pending |
-| 10 Handoff | ⏳ pending |
+| 4 Deploy to live Cloudron + functional validation | ✅ done — live, healthy, all code langs + webhook + email |
+| 5 Integration with sibling AI apps (incl. bge reranker) | ✅ done — egress + real bge rerank call |
+| 6 Backup / restore | ◐ partial — backup verified (incl. PG) during update; dedicated restore-into-fresh recommended on a throwaway |
+| 7 Update / upgrade path | ✅ done — update applied, data persisted |
+| 8 Hardening & compliance review | ◐ partial — posture set (ADR 0005), password changed, base_url set |
+| 9 Docs, release, `CloudronVersions.json`, push to GitHub + Forgejo | ⏳ in progress |
+| 10 Handoff | ⏳ in progress |
 
 ## Key decisions (locked)
 
