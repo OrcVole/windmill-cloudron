@@ -10,18 +10,20 @@ IMAGE="${1:-local/windmill-cloudron:dev}"
 ENGINE="$(command -v podman || command -v docker)"
 NAME="windmill-smoke-$$"
 VOL="windmill-smoke-vol-$$"
+PGVOL="windmill-smoke-pg-$$"
 PORT=8099
 BASE="http://127.0.0.1:${PORT}"
 fail() { echo "SMOKE FAIL: $*" >&2; "$ENGINE" logs "$NAME" 2>&1 | tail -40 >&2; cleanup; exit 1; }
-cleanup() { "$ENGINE" rm -f "$NAME" >/dev/null 2>&1 || true; "$ENGINE" volume rm "$VOL" >/dev/null 2>&1 || true; }
+cleanup() { "$ENGINE" rm -f "$NAME" >/dev/null 2>&1 || true; "$ENGINE" volume rm "$VOL" "$PGVOL" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 
 echo "==> smoke: starting ${IMAGE} Cloudron-style"
 "$ENGINE" volume create "$VOL" >/dev/null
+"$ENGINE" volume create "$PGVOL" >/dev/null
 "$ENGINE" run -d --name "$NAME" \
   -e CLOUDRON_APP_ORIGIN=https://windmill.smoke.local \
   -e CLOUDRON_APP_DOMAIN=windmill.smoke.local \
-  -v "$VOL":/app/data -p ${PORT}:8000 \
+  -v "$VOL":/app/data -v "$PGVOL":/app/pgdata -p ${PORT}:8000 \
   --read-only --tmpfs /run --tmpfs /tmp --shm-size=512m \
   "$IMAGE" >/dev/null
 

@@ -1,3 +1,9 @@
+[1.0.1]
+* Bundled PostgreSQL data directory moved to a Cloudron persistentDir (/app/pgdata), excluded from the filesystem backup.
+* Added a logical-dump backup strategy (backupCommand/restoreCommand) using pg_dumpall so backups are consistent — a hot file-copy of a running Postgres data directory is unsafe (torn pages). Existing installs migrate the cluster automatically on first boot.
+* Postgres major-version guard: refuse to start (no silent re-init) if the data directory version does not match the bundled server; documents the pg_upgrade path.
+* Conservative Postgres memory settings (shared_buffers/work_mem) for the shared container memory budget; documented a recommended memory floor.
+
 [1.0.0]
 * Initial release of Windmill for Cloudron.
 * Windmill Community Edition 1.741.0, official binary used unmodified.
