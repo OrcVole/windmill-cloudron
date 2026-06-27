@@ -1,0 +1,13 @@
+# Keep the build context tiny — only the entrypoint + process configs are needed.
+.git
+.gitignore
+.claude
+docs
+test
+*.md
+CHANGELOG
+LICENSE
+NOTICE
+CloudronVersions.json
+windmill-cloudron-foundation-prompt.md
+logo-src

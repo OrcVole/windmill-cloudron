@@ -1,0 +1,17 @@
+# Local-only / sensitive — never publish (box hostnames, private mirror, internal URLs, tokens)
+windmill-cloudron-foundation-prompt.md
+.claude/settings.local.json
+.claude/
+docs/LOCAL-*.md
+**/*.local.md
+**/.secrets/
+*.token
+*.tokens
+secrets.env
+
+# Build / runtime artifacts
+*.log
+/tmp-build/
+*.tar
+*.tar.gz
+logo-src/

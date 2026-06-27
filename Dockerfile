@@ -1,0 +1,48 @@
+# Windmill for Cloudron — thin packaging layer.
+# We orchestrate the official Windmill Community Edition binary UNMODIFIED (license + AGENTS.md rule #2).
+# Final stage is cloudron/base (platform tooling depends on it); the Windmill binary and its language
+# runtimes are COPY'd, unmodified, from the official CE image. PostgreSQL is bundled (the Cloudron
+# postgresql addon cannot grant Windmill the superuser/BYPASSRLS it requires — see docs/decisions/0003).
+
+ARG WINDMILL_VERSION=1.741.0
+
+# --- source of the unmodified upstream binary + runtimes ---
+FROM ghcr.io/windmill-labs/windmill:1.741.0@sha256:18c7114977783a2f6632387b6255e7c51849b8e338e3daf36438033cf867da91 AS windmill
+
+# --- the Cloudron app image ---
+FROM cloudron/base:5.0.0@sha256:04fd70dbd8ad6149c19de39e35718e024417c3e01dc9c6637eaf4a41ec4e596c
+
+ARG WINDMILL_VERSION
+ENV WINDMILL_VERSION=${WINDMILL_VERSION}
+
+# Bundled PostgreSQL 16 server (Ubuntu 24.04 ships 16.x in main).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends postgresql-16 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Windmill binary + the language runtimes it needs, copied UNMODIFIED from the official CE image.
+COPY --from=windmill /usr/src/app/windmill /app/code/windmill
+COPY --from=windmill /usr/bin/deno         /usr/local/bin/deno
+COPY --from=windmill /usr/bin/bun          /usr/local/bin/bun
+COPY --from=windmill /usr/local/bin/uv     /usr/local/bin/uv
+COPY --from=windmill /usr/local/go         /usr/local/go
+COPY --from=windmill /usr/bin/wmill        /usr/local/bin/wmill
+
+ENV GO_PATH=/usr/local/go/bin/go \
+    PATH=/usr/local/go/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Build-time linkage gate: the build fails here if the binary/runtimes do not resolve on the base.
+RUN set -eux; \
+    if ldd /app/code/windmill | grep -q 'not found'; then ldd /app/code/windmill; echo 'unresolved libs'; exit 1; fi; \
+    /app/code/windmill version; \
+    deno --version; \
+    bun --version; \
+    uv --version; \
+    /usr/local/go/bin/go version; \
+    /usr/lib/postgresql/16/bin/postgres --version
+
+COPY start.sh supervisord.conf nginx.conf /app/code/
+RUN chmod 0755 /app/code/start.sh
+
+# CMD (never ENTRYPOINT — keeps Cloudron debug mode usable).
+CMD [ "/app/code/start.sh" ]
