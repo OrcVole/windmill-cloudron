@@ -56,6 +56,11 @@ curl -fsS "${BASE}/api/users/whoami" -H "Authorization: Bearer ${TOKEN}" 2>/dev/
   | grep -q '"super_admin":true' || fail "whoami did not confirm super_admin"
 echo "    login + whoami(super_admin) OK"
 
+echo "==> smoke: server + worker process split (not standalone)"
+WM_PROCS="$("$ENGINE" exec "$NAME" sh -c 'ps -C windmill -o pid= 2>/dev/null | wc -l' | tr -d '[:space:]')"
+[ "${WM_PROCS:-0}" -ge 2 ] || fail "expected >=2 windmill processes (1 server + >=1 worker); found ${WM_PROCS}"
+echo "    ${WM_PROCS} windmill processes (server + worker split, not standalone) OK"
+
 echo "==> smoke: runs as cloudron + read-only rootfs"
 "$ENGINE" exec "$NAME" sh -c 'id -un windmill >/dev/null 2>&1; ps -o user= -C windmill | grep -qx cloudron' \
   || fail "windmill is not running as cloudron"

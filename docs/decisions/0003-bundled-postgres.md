@@ -90,6 +90,7 @@ step (or restore-from-dump, which is version-portable because it's logical). Doc
 
 ## Memory (added 1.0.1)
 
-Postgres and the Windmill worker share one Cloudron `memoryLimit`; an OOM can take the DB down with
-the app. `shared_buffers` is set conservatively (192 MB) and `work_mem` low (8 MB) relative to the
-3 GiB default; `POSTINSTALL.md` documents a 2 GB floor / 3 GB recommended.
+Postgres, the Windmill server, and the worker processes share one Cloudron `memoryLimit`; an OOM can
+take the DB down with the app. `shared_buffers` is set conservatively (192 MB) and `work_mem` low
+(8 MB) relative to the 3 GiB default, and the worker count (ADR 0001) is derived from the memory limit
+so PG always keeps headroom; `POSTINSTALL.md` documents a 2 GB floor / 3 GB recommended.

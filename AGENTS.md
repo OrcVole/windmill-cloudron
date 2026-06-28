@@ -26,9 +26,11 @@ When ground truth contradicts a rule, change the rule here in a commit, with the
 
 ## Settled architecture decisions (see docs/decisions/ for full ADRs)
 
-- **Topology:** single container, `MODE=standalone` (server + in-process workers), fronted by nginx
-  for an immediate `/health 200` during first-boot migrations. Bundled **PostgreSQL 16** + Windmill
-  under **supervisor**.
+- **Topology:** single container — one Windmill `MODE=server` process + N `MODE=worker` processes
+  (the upstream docker-compose split, co-located; **not** `MODE=standalone`, which is dev-only per the
+  maintainer). Worker count scales with the memory limit (`WINDMILL_WORKER_COUNT` overrides). Fronted
+  by nginx for an immediate `/health 200` during first-boot migrations. Bundled **PostgreSQL 16**, all
+  under **supervisor**. (ADR 0001.)
 - **Postgres is bundled, not the addon.** The Cloudron `postgresql` addon cannot create Windmill's
   `windmill_admin WITH BYPASSRLS` role or let the app `SET ROLE` to it; the only addon-compatible
   workaround is patching the binary, which rule #2 forbids. So we bundle PG as superuser, data under

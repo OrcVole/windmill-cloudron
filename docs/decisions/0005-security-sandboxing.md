@@ -10,9 +10,12 @@ user/mount/PID namespaces, no host Docker socket. Windmill's job isolation depen
 - **nsjail** (filesystem/syscall sandbox) — Windmill CE defaults `DISABLE_NSJAIL=true` anyway, and
   nsjail needs user namespaces + an unmasked `/proc`. Off.
 - **PID-namespace isolation** (`ENABLE_UNSHARE_PID`/`FAVOR_UNSHARE_PID`) — needs `unshare
-  --mount-proc`, i.e. privileged. **Verified off**: the worker logs
+  --mount-proc`, i.e. privileged. **Verified off**: each worker process logs
   `unshare: mount /proc failed: Permission denied … Unshare isolation will NOT be available` — the
-  expected, benign result of our unprivileged container.
+  expected, benign result of our unprivileged container. We therefore do **not** set
+  `FAVOR_UNSHARE_PID=true`, even though upstream's docker-compose worker does — here it cannot work and
+  would only emit this warning. (As of v1.1.0 workers are separate processes; this posture is per
+  worker — see [0001](0001-topology.md).)
 - **Docker "container step" / `# sandbox <image>` jobs** — need a Docker socket / dind. Unavailable.
 
 ## Decision

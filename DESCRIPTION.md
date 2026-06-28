@@ -8,7 +8,7 @@ approval steps and granular permissions, all backed by PostgreSQL.
 This package runs the official **Windmill Community Edition** binary, unmodified, in a single
 Cloudron container:
 
-- **Standalone mode** — the API server and a worker in one process, fronted by nginx.
+- **Server + workers** — a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.
 - **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles
   with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with
   all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot

@@ -135,9 +135,11 @@ echo "==> [start] PostgreSQL bootstrap complete"
 # 4. Windmill runtime environment (mapped from Cloudron every boot; caches under /app/data).
 # ------------------------------------------------------------------------------------------
 export DATABASE_URL="postgres://windmill:${WINDMILL_DB_PASSWORD}@127.0.0.1:5432/windmill?sslmode=disable"
-export MODE=standalone
-export PORT=8001
-export NUM_WORKERS=1
+# MODE and PORT are set PER PROCESS in the supervisor units (server vs worker), never globally:
+# a global PORT would make every worker try to bind 8001. We deliberately do NOT run
+# MODE=standalone — upstream supports it for development only (one process, NUM_WORKERS pinned to 1).
+# Instead we run the real split: one MODE=server process + N MODE=worker processes, the same
+# topology Windmill ships in docker-compose, co-located in this single Cloudron container.
 export BASE_URL="${CLOUDRON_APP_ORIGIN:-http://localhost:8000}"
 export BASE_INTERNAL_URL="http://127.0.0.1:8001"
 export RUST_LOG="${RUST_LOG:-info}"
@@ -167,10 +169,64 @@ if [[ -n "${CLOUDRON_MAIL_SMTP_SERVER:-}" ]]; then
   export SMTP_DISABLE_TLS=true
 fi
 
-echo "==> [start] mode=${MODE} port=${PORT} workers=${NUM_WORKERS} base_url=${BASE_URL}"
+# ------------------------------------------------------------------------------------------
+# 4b. Worker units. Windmill runs as one dedicated API-server process plus N dedicated worker
+#     processes (the split upstream ships in docker-compose), NOT MODE=standalone. The worker
+#     COUNT scales with the app's memory limit, reserving headroom for PostgreSQL + the server,
+#     so an operator raises throughput simply by raising memory (Cloudron → Resources). The
+#     server unit lives in supervisord.conf; the worker units are generated here into a writable
+#     include dir so the count can vary per boot. WINDMILL_WORKER_COUNT overrides the math.
+# ------------------------------------------------------------------------------------------
+compute_worker_count() {
+  if [[ "${WINDMILL_WORKER_COUNT:-}" =~ ^[1-9][0-9]*$ ]]; then
+    echo "${WINDMILL_WORKER_COUNT}"; return
+  fi
+  local mem_bytes="${CLOUDRON_MEMORY_LIMIT:-}"
+  if [[ ! "${mem_bytes}" =~ ^[0-9]+$ ]]; then
+    mem_bytes="$(cat /sys/fs/cgroup/memory.max 2>/dev/null \
+              || cat /sys/fs/cgroup/memory/memory.limit_in_bytes 2>/dev/null || echo '')"
+  fi
+  # cgroup v2 'max' (unlimited) or anything unparseable → assume the documented 3 GiB default.
+  [[ "${mem_bytes}" =~ ^[0-9]+$ ]] || mem_bytes=$((3 * 1024 * 1024 * 1024))
+  local mem_mb=$(( mem_bytes / 1024 / 1024 ))
+  local reserve_mb=1024    # PostgreSQL + server + nginx + headroom (always-on)
+  local per_worker_mb=768  # per-worker peak budget
+  local n=$(( (mem_mb - reserve_mb) / per_worker_mb ))
+  (( n < 1 )) && n=1
+  (( n > 6 )) && n=6        # past this, scale memory (or a real multi-node deploy), not in-box workers
+  echo "${n}"
+}
+WORKER_COUNT="$(compute_worker_count)"
+
+WM_SUPERVISOR_DIR=/run/windmill/supervisor.d
+mkdir -p "${WM_SUPERVISOR_DIR}"
+rm -f "${WM_SUPERVISOR_DIR}"/worker-*.conf
+WM_PG_WAIT='until /usr/lib/postgresql/16/bin/pg_isready -h /app/pgdata -p 5432 >/dev/null 2>&1; do echo "==> [windmill] waiting for postgresql"; sleep 1; done'
+for i in $(seq 1 "${WORKER_COUNT}"); do
+  cat > "${WM_SUPERVISOR_DIR}/worker-${i}.conf" <<EOF
+[program:windmill-worker-${i}]
+priority=25
+command=/bin/bash -c '${WM_PG_WAIT}; exec /app/code/windmill'
+environment=MODE="worker",WORKER_GROUP="default"
+user=cloudron
+directory=${DATA}
+autostart=true
+autorestart=true
+startsecs=10
+stopsignal=TERM
+stopwaitsecs=30
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+EOF
+done
+
+echo "==> [start] topology=server+${WORKER_COUNT}worker(s) server_port=8001 base_url=${BASE_URL}"
 echo "==> [start] db_password $( [[ -s "${DB_ENV}" ]] && echo present || echo MISSING )  smtp $( [[ -n "${SMTP_HOST:-}" ]] && echo configured || echo unset )"
 
 # ------------------------------------------------------------------------------------------
-# 5. Hand off to supervisor (postgres + windmill + nginx, each as the cloudron user).
+# 5. Hand off to supervisor (postgres + windmill-server + windmill-worker-N + nginx, each as the
+#    cloudron user). Worker units were generated above into /run/windmill/supervisor.d.
 # ------------------------------------------------------------------------------------------
 exec /usr/bin/supervisord --configuration "${CODE}/supervisord.conf" --nodaemon

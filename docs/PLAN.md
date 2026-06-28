@@ -21,7 +21,7 @@ Refined from the foundation brief after Phase 0 ground-truthing. Effort tags per
 
 ## Key decisions (locked)
 
-- Single container, `MODE=standalone`, nginx-fronted, supervisor-managed. (ADR 0001)
+- Single container, Windmill server + N worker processes (not `MODE=standalone`), nginx-fronted, supervisor-managed. (ADR 0001)
 - `cloudron/base` final stage; COPY the unmodified CE binary + runtimes. (ADR 0002)
 - **Bundled PostgreSQL 16**, not the addon — empirically validated. (ADR 0003)
 - All state in the bundled Postgres → rides `/app/data` backup; no external key file. (ADR 0004)
