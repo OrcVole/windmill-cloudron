@@ -6,6 +6,16 @@ webhooks, scheduled jobs, multi-step flows and auto-generated UIs.
 
 Pinned to Windmill **Community Edition v1.741.0**, run **unmodified**.
 
+> **Unofficial community package.** Maintained by its packager — **not affiliated with, endorsed by,
+> or supported by [Windmill Labs](https://www.windmill.dev)**. It orchestrates the official Windmill
+> Community Edition binary **unmodified**; report *packaging* issues here and Windmill product issues
+> upstream.
+>
+> **Scope: single-node, small-team.** It runs Windmill's supported **server + worker** split
+> co-located in one Cloudron container, scaling workers by the memory you allocate — it is **not** a
+> substitute for a horizontally-scaled, multi-node Windmill deployment for high availability or heavy
+> throughput.
+
 ## Design in one paragraph
 
 A single container runs Windmill as a dedicated API/UI **server** process plus one or more dedicated

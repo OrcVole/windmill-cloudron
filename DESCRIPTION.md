@@ -5,6 +5,12 @@ Windmill is an open-source developer platform and workflow engine. Turn scripts 
 flows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,
 approval steps and granular permissions, all backed by PostgreSQL.
 
+**Unofficial community package** — maintained by its packager, **not affiliated with, endorsed by, or
+supported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and
+is scoped as a **single-node, small-team** deployment (the server and worker processes co-located in
+one container, workers scaled by memory) — not a replacement for a horizontally-scaled, multi-node
+Windmill.
+
 This package runs the official **Windmill Community Edition** binary, unmodified, in a single
 Cloudron container:
 
