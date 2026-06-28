@@ -6,7 +6,7 @@
   "description": "file://DESCRIPTION.md",
   "changelog": "file://CHANGELOG",
   "icon": "file://logo.png",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "upstreamVersion": "1.741.0",
   "healthCheckPath": "/health",
   "httpPort": 8000,
@@ -29,6 +29,8 @@
   "documentationUrl": "https://www.windmill.dev/docs/intro",
   "website": "https://www.windmill.dev",
   "contactEmail": "orcvole@users.noreply.github.com",
+  "packagerName": "OrcVole",
+  "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
   "minBoxVersion": "9.1.0",
   "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
   "mediaLinks": [

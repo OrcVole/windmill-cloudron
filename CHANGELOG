@@ -1,3 +1,6 @@
+[1.0.2]
+* Add packagerName/packagerUrl to the manifest. Cloudron 9.x rejects a community install when packagerName is empty, so the versions-URL install failed. Metadata-only fix — same application image as 1.0.1.
+
 [1.0.1]
 * Bundled PostgreSQL data directory moved to a Cloudron persistentDir (/app/pgdata), excluded from the filesystem backup.
 * Added a logical-dump backup strategy (backupCommand/restoreCommand) using pg_dumpall so backups are consistent — a hot file-copy of a running Postgres data directory is unsafe (torn pages). Existing installs migrate the cluster automatically on first boot.
