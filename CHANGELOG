@@ -1,3 +1,6 @@
+[1.1.1]
+* Documentation/metadata only (same application image as 1.1.0). Label the package clearly as an unofficial community package — not affiliated with or endorsed by Windmill Labs — and scoped as a single-node, small-team deployment. No functional change.
+
 [1.1.0]
 * Topology: run Windmill as a dedicated API/UI server process plus one or more dedicated worker processes under supervisor, instead of MODE=standalone (which upstream supports for development only, with NUM_WORKERS pinned to 1). This is the same server/worker split Windmill ships in its docker-compose, co-located in the single Cloudron container.
 * Worker count scales with the app's memory limit (Cloudron → Resources): more memory means more worker processes, sized to leave headroom for PostgreSQL and the server. Override with the WINDMILL_WORKER_COUNT environment variable.
