@@ -13,9 +13,11 @@ and cannot be pre-seeded, so changing them is your first task.
 
 **What this package runs**
 
-A single container with Windmill (standalone: API server + one worker), a **bundled PostgreSQL 16**,
-and nginx — all managed by supervisor. Everything durable (the database, dependency caches) lives
-under `/app/data` and is included in Cloudron backups.
+A single container with Windmill running as a dedicated API/UI server process plus one or more worker
+processes (the same server/worker split Windmill runs in production, co-located here), a **bundled
+PostgreSQL 16**, and nginx — all managed by supervisor. The number of worker processes scales with the
+memory you allocate to the app. Everything durable (the database, dependency caches) lives under
+`/app/data` and is included in Cloudron backups.
 
 **Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in
 a language may take a little longer while its runtime/dependencies are fetched and cached.
@@ -46,9 +48,12 @@ default. This is expected, not a fault.
 - **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a
   last resort, the superadmin password can be reset from the database via `cloudron exec`.
 
-**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and a worker, all under
-one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory event would take the
-database down with the app. Raise it in the dashboard (Resources) for heavier workloads.
+**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker
+processes, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory
+event would take the database down with the app. **Raising the memory limit in the dashboard
+(Resources) automatically adds worker processes** (more memory → more parallel jobs), leaving the
+database its headroom — so it's the single knob for capacity. Advanced operators can pin the count
+with the `WINDMILL_WORKER_COUNT` environment variable.
 
 **Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.
 If you change the app's domain, update the base URL in Windmill's instance settings.

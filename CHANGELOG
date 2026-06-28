@@ -1,3 +1,8 @@
+[1.1.0]
+* Topology: run Windmill as a dedicated API/UI server process plus one or more dedicated worker processes under supervisor, instead of MODE=standalone (which upstream supports for development only, with NUM_WORKERS pinned to 1). This is the same server/worker split Windmill ships in its docker-compose, co-located in the single Cloudron container.
+* Worker count scales with the app's memory limit (Cloudron → Resources): more memory means more worker processes, sized to leave headroom for PostgreSQL and the server. Override with the WINDMILL_WORKER_COUNT environment variable.
+* No data, settings, or credentials change; existing installs keep their database and caches and migrate in place. Security posture is unchanged — native jobs run in the app's trust boundary; nsjail / PID-namespace isolation remain unavailable under Cloudron's unprivileged container.
+
 [1.0.2]
 * Add packagerName/packagerUrl to the manifest. Cloudron 9.x rejects a community install when packagerName is empty, so the versions-URL install failed. Metadata-only fix — same application image as 1.0.1.
 

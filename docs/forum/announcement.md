@@ -58,7 +58,7 @@ Good fit if you want a private automation/back-office platform that sits next to
 
 **What helped**
 
-- **`MODE=standalone`** is the single-container lever — the API server and a worker in one process. `NUM_WORKERS` is capped to 1 in standalone (raising it needs flags upstream marks unsafe), so scale by memory, not worker count.
+- **Run the real server/worker split, not `MODE=standalone`.** Standalone is a single-process dev convenience (and pins `NUM_WORKERS` to 1); upstream is clear it isn't for production. You can still fit one container: run one `MODE=server` process plus N `MODE=worker` processes under supervisor and scale the worker count by the memory the platform gives the app. (Thanks to the Windmill maintainer for steering us off standalone — this package now ships the split.)
 - **Shape A still wins for a multi-runtime image** when the linkage gate is green: copy the unmodified CE binary + the self-contained runtimes (Deno, Bun, uv, Go) from the official image onto `cloudron/base`, rather than `FROM` the 3.9 GB CE image. The Windmill binary's only direct deps are stock glibc libs already on the base.
 - **All durable state is in Postgres** (including the per-workspace encryption keys and the auto-generated `jwt_secret`), so there's no external data-loss-critical key file to seed — the database backup is the whole backup.
 
@@ -73,7 +73,7 @@ Good fit if you want a private automation/back-office platform that sits next to
 **Still rough / open questions**
 
 - A cold install from the versions URL on a fresh subdomain is the gate we'd most welcome other eyes on.
-- The bundled-Postgres memory budget is shared with the Windmill worker — an OOM takes the DB down with the app. Conservative `shared_buffers`/`work_mem` plus a documented memory floor mitigate it; real-world tuning feedback is welcome.
+- The bundled-Postgres memory budget is shared with the Windmill server and workers under one container limit — an OOM takes the DB down with the app. Conservative `shared_buffers`/`work_mem`, a worker count derived from the memory limit (so PG keeps headroom), and a documented memory floor mitigate it; real-world tuning feedback is welcome.
 
 ---
 
