@@ -3,6 +3,28 @@
 The empirical log. Every assumption carried from a brief/README/reference is recorded here as
 **VERIFIED** (checked against a real build/run) or **ASSUMED** (still to confirm on the live box).
 
+## 2026-07-30 — 1.1.1 metadata fix: store listing was blocked by missing `tags`
+
+- **VERIFIED (root cause of the invisible ca.cloudron.io listing)** — the store's sync log
+  (surfaced by fbartels on the forum) said: `Skipping community app Windmill …: tags is missing in
+  manifest`. `tags` is a required field in `@cloudron/manifest-format`'s `checkCommonRequirements`
+  (same library the store runs); every other OrcVole package ships tags — this manifest didn't, and
+  the 2026-07-30 client-side audit missed it because it compared the *entry* key sets, not the
+  manifest key sets. Added `"tags": ["automation", "workflow", "developer", "scripts"]` and
+  regenerated the 1.1.1 entry in place with `cloudron versions update` — no new version key, so no
+  auto-deploy to existing installs.
+- **VERIFIED** — retired `scripts/make-cloudron-versions.py` in favour of the cloudron CLI
+  (`cloudron versions add`/`update`), per fbartels' review. The CLI expands the `file://` fields,
+  extracts only the current version's CHANGELOG entry (the script inlined the whole file),
+  preserves earlier version entries (the script overwrote the file with a single entry), and runs
+  `checkVersionsRequirements` before writing — it would have caught the missing tags.
+- CLI quirks (cloudron 7.0.5): `--version` on `versions update` is swallowed by the CLI's global
+  version flag — omit it (defaults to the manifest's version). `versions add`/`update` read
+  `dockerImage` from `~/.cloudron.json` `apps."<abs path>"` state normally written by
+  `cloudron build`; we build with podman, so register the digest-pinned image there by hand.
+  The CLI writes `ts` as an RFC-2822 string (`new Date().toUTCString()`); the store's
+  `parseVersions` accepts both that and the numeric-ms form the old script wrote.
+
 ## 2026-06-28 — 1.1.0: topology change to the real server/worker split
 
 - **VERIFIED (build + local smoke)** — Replaced `MODE=standalone` with one `MODE=server` process +

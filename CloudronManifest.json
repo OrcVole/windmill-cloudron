@@ -8,6 +8,7 @@
   "icon": "file://logo.png",
   "version": "1.1.1",
   "upstreamVersion": "1.741.0",
+  "tags": [ "automation", "workflow", "developer", "scripts" ],
   "healthCheckPath": "/health",
   "httpPort": 8000,
   "addons": {
