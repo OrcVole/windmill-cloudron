@@ -54,6 +54,36 @@ test/smoke.sh local/windmill-cloudron:dev     # builds nothing; runs the image C
 test/secret-scan.sh                            # no box hostnames / tokens / internal URLs in tracked files
 ```
 
+## Releasing (community store channel)
+
+The install/update channel is `CloudronVersions.json` at this repo's raw URL, listed on
+[ca.cloudron.io](https://ca.cloudron.io). It is maintained with the **cloudron CLI**
+(`npm i -g cloudron`), not by hand or by a custom script:
+
+```bash
+# 1. Bump "version" in CloudronManifest.json and add a matching [x.y.z] entry to CHANGELOG.
+# 2. Build and push the image; note the registry digest.
+# 3. We build with podman (not `cloudron build`), so record the digest-pinned image where the
+#    CLI expects it: in ~/.cloudron.json under apps."<absolute repo path>".dockerImage =
+#    "ghcr.io/orcvole/windmill-cloudron@sha256:…".
+cloudron versions add --state published   # 4. appends the release to CloudronVersions.json
+# 5. Verify, commit, push. ca.cloudron.io re-syncs the raw URL periodically.
+```
+
+Notes learned the hard way:
+
+- The store **requires `tags`** in the manifest (also `iconUrl`, `packagerName`, `packagerUrl`,
+  `contactEmail`, `mediaLinks`). A missing field doesn't error at submission — the store's sync
+  silently skips the app (`Skipping community app …: tags is missing in manifest`) and the listing
+  never goes public. `cloudron versions add` validates these before writing; a hand-rolled
+  generator won't.
+- To fix metadata on an already-published version in place, use
+  `cloudron versions update --state published`. It targets the manifest's current version — do
+  **not** pass `--version x.y.z`; in cloudron CLI 7.0.5 that flag is swallowed by the CLI's global
+  `--version` and the command silently does nothing.
+- A **new** version key in the file auto-deploys to every existing install. Test with
+  `cloudron install --image` before publishing; metadata-only in-place edits don't trigger updates.
+
 ## Security posture
 
 Cloudron runs the container unprivileged with a read-only root filesystem, so Windmill's nsjail /
