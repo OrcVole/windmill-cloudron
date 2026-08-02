@@ -1,3 +1,7 @@
+[1.1.2]
+* Upstream Windmill 1.741.0 to 1.776.0 (44 releases). No packaging change: the Cloudron layer copies the same six binaries from the official image, so upstream's own base move (Debian bookworm to trixie) and their build-tool bumps do not reach this image. Includes upstream's fix for an unauthenticated DAP debugger launch bypass.
+* Windmill applies its own schema migrations on boot; 35 new ones land with this bump. Two drop a redundant column each (azure_trigger.email, workspace_settings.deploy_to) after folding the surviving data forward — deploy_to links that could not be converted are preserved in a workspace_deploy_to_unmigrated table rather than discarded.
+
 [1.1.1]
 * Documentation/metadata only (same application image as 1.1.0). Label the package clearly as an unofficial community package — not affiliated with or endorsed by Windmill Labs — and scoped as a single-node, small-team deployment. No functional change.
 

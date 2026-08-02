@@ -1,3 +1,5 @@
+<upstream>1.776.0</upstream>
+
 ## Windmill
 
 Windmill is an open-source developer platform and workflow engine. Turn scripts in
