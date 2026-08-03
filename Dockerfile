@@ -4,10 +4,10 @@
 # runtimes are COPY'd, unmodified, from the official CE image. PostgreSQL is bundled (the Cloudron
 # postgresql addon cannot grant Windmill the superuser/BYPASSRLS it requires — see docs/decisions/0003).
 
-ARG WINDMILL_VERSION=1.776.0
+ARG WINDMILL_VERSION=1.777.1
 
 # --- source of the unmodified upstream binary + runtimes ---
-FROM ghcr.io/windmill-labs/windmill:1.776.0@sha256:b79076aa21e2d9563c1a632691b5c9b2c18a4930aa90982cb36641ead1fa275b AS windmill
+FROM ghcr.io/windmill-labs/windmill:1.777.1@sha256:0dd57710b4471498e37427269a73fc4c48805b747c435a153c8a22792116e7e3 AS windmill
 
 # --- the Cloudron app image ---
 FROM cloudron/base:5.0.0@sha256:04fd70dbd8ad6149c19de39e35718e024417c3e01dc9c6637eaf4a41ec4e596c

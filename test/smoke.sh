@@ -8,6 +8,18 @@ set -euo pipefail
 
 IMAGE="${1:-local/windmill-cloudron:dev}"
 ENGINE="$(command -v podman || command -v docker)"
+
+# --- identity guard (#188): refuse to test an image that is not this checkout's version --------
+# The default tag above is built by nothing in this repo, so it WILL eventually go stale, and
+# every assertion below then passes against the wrong subject. ABORT, not FAIL.
+_g_want=$(grep -o '"upstreamVersion"[^,]*' "$(dirname "$0")/../CloudronManifest.json" | head -1 | cut -d'"' -f4)
+_g_got=$("$ENGINE" run --rm --entrypoint /app/code/windmill "$IMAGE" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+if [ -z "$_g_got" ] || [ "$_g_want" != "$_g_got" ]; then
+  echo "ABORT: ${IMAGE} bakes windmill '${_g_got:-unreadable}', manifest says '${_g_want}'." >&2
+  echo "       Build from this checkout before smoking it (stale-tag trap, field guide #188)." >&2
+  exit 2
+fi
+echo "identity: image bakes windmill ${_g_got}, matching the manifest"
 NAME="windmill-smoke-$$"
 VOL="windmill-smoke-vol-$$"
 PGVOL="windmill-smoke-pg-$$"
@@ -39,11 +51,13 @@ echo "    /health 200 (no auth) OK  [liveness — served by nginx before the bac
 echo "==> smoke: waiting for Windmill readiness (/api/version) — migrations run first"
 ready=
 for _ in $(seq 1 60); do
-  if curl -fsS "${BASE}/api/version" 2>/dev/null | grep -q '1.741.0'; then ready=1; break; fi
+  # expected version comes from the MANIFEST, never hardcoded: a pinned '1.741.0' here outlived
+  # two upstream bumps and made the suite red-on-healthy, unnoticed because unrun (2026-08-03)
+  if curl -fsS "${BASE}/api/version" 2>/dev/null | grep -qF "${_g_want}"; then ready=1; break; fi
   sleep 2
 done
-[ -n "$ready" ] || fail "/api/version never reported 1.741.0 (backend not ready)"
-echo "    /api/version reports 1.741.0 OK"
+[ -n "$ready" ] || fail "/api/version never reported ${_g_want} (backend not ready)"
+echo "    /api/version reports ${_g_want} OK"
 
 [ "$(curl -fsS -o /dev/null -w '%{http_code}' "${BASE}/" 2>/dev/null)" = "200" ] || fail "/ did not return 200"
 echo "    / (frontend) 200 OK"
