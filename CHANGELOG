@@ -1,3 +1,12 @@
+[1.1.3]
+* Upstream Windmill 1.776.0 to 1.777.1 (3 releases). Fixes include sandboxed-container job results
+  (result.json/stdout) returning correctly again, and a vite revert that stops random 500 error
+  pages in the UI. Features: a dedicated dbt editor with a refreshed model graph, session recording
+  in app dev, and an on-behalf-of badge on script/flow pages.
+* One schema migration lands with this bump (dbt editor preview graphs): it relaxes a NOT NULL so
+  editor-buffer graphs can exist without a deployed version, and adds versioned/editor indexes.
+  Applied automatically on first boot, as usual.
+
 [1.1.2]
 * Upstream Windmill 1.741.0 to 1.776.0 (44 releases). No packaging change: the Cloudron layer copies the same six binaries from the official image, so upstream's own base move (Debian bookworm to trixie) and their build-tool bumps do not reach this image. Includes upstream's fix for an unauthenticated DAP debugger launch bypass.
 * Windmill applies its own schema migrations on boot; 35 new ones land with this bump. Two drop a redundant column each (azure_trigger.email, workspace_settings.deploy_to) after folding the surviving data forward — deploy_to links that could not be converted are preserved in a workspace_deploy_to_unmigrated table rather than discarded.
