@@ -1,3 +1,14 @@
+[1.1.4]
+* Upstream Windmill 1.777.1 to 1.782.0 (6 releases). Adds Azure Workload Identity support for
+  mssql and postgres connections, and improved database authentication logging. Removes the tag
+  management UI and app staticOutputs.
+* One schema migration lands with this bump (workspace_diff_last_event). Verified over a populated
+  store: 621 applied migrations became 622, every row count identical before and after, and a
+  restore from a named backup returned the same data byte for byte.
+* Known divergence, recorded rather than silently adopted: upstream added CA-certificate
+  auto-registration and an INIT_SCRIPT pre-flight hook to its own entrypoint. This package's
+  start.sh carries neither.
+
 [1.1.3]
 * Upstream Windmill 1.776.0 to 1.777.1 (3 releases). Fixes include sandboxed-container job results
   (result.json/stdout) returning correctly again, and a vite revert that stops random 500 error
