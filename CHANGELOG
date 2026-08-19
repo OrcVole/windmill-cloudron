@@ -1,3 +1,19 @@
+[1.1.6]
+* Windmill 1.792.2 (from 1.783.0), thirteen upstream releases
+* Security: ansible git repository URLs are validated before git is invoked (1.792.2)
+* Schema: 1.790.0 adds a `trigger_history` table with source tracking, so this update carries a database migration
+* No breaking changes and no environment variable, config path or port changes across the span
+
+[1.1.5]
+* Upstream Windmill 1.782.0 to 1.783.0. Thirteen commits, no database migrations.
+* New user-visible feature: an opt-in public sharing option for job pages, guarded by
+  Windmill's own authentication layer and shipped with new read-auth tests upstream. Sharing
+  remains off unless a user enables it per job page.
+* Fixes include scoping a forked workspace's cloned app policy and custom path to its creator.
+* Package validation: full survival leg on staging (install 1.1.4 from the published feed,
+  update over live data, restore from a named backup, data byte-identical at every stage) and
+  the running binary verified to report v1.783.0 after deploy.
+
 [1.1.4]
 * Upstream Windmill 1.777.1 to 1.782.0 (6 releases). Adds Azure Workload Identity support for
   mssql and postgres connections, and improved database authentication logging. Removes the tag

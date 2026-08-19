@@ -6,8 +6,8 @@
   "description": "file://DESCRIPTION.md",
   "changelog": "file://CHANGELOG",
   "icon": "file://logo.png",
-  "version": "1.1.5",
-  "upstreamVersion": "1.783.0",
+  "version": "1.1.6",
+  "upstreamVersion": "1.792.2",
   "tags": [
     "automation",
     "workflow",
@@ -47,5 +47,5 @@
       "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
     }
   },
-  "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:edb1ea07e4b9130e7dd9a3ea61234037254f55639b081f3a6bd4e4fc3792f216"
+  "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:13762445a5ac947bb45a7779ab5b6544a86381ca25bf6fcf515f43866df2e6da"
 }
