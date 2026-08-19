@@ -1,476 +1,532 @@
 {
-  "stable": true,
-  "versions": {
-    "1.0.0": {
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs \u2014 with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Standalone mode** \u2014 the API server and a worker in one process, fronted by nginx.\n- **Bundled PostgreSQL** \u2014 Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture \u2014 it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
-        "changelog": "[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
-        "icon": "file://logo.png",
-        "version": "1.0.0",
-        "upstreamVersion": "1.741.0",
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
+    "stable": true,
+    "versions": {
+        "1.0.0": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Standalone mode** — the API server and a worker in one process, fronted by nginx.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
+                "icon": "file://logo.png",
+                "version": "1.0.0",
+                "upstreamVersion": "1.741.0",
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill (standalone: API server + one worker), a **bundled PostgreSQL 16**,\nand nginx — all managed by supervisor. Everything durable (the database, dependency caches) lives\nunder `/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:5309422254b43297854de707dae03c21100502bab858e9c2f9dfe6bdcdc3a0c4"
+            },
+            "creationDate": "2026-06-27T19:40:00.000Z",
+            "ts": 1782589200000,
+            "publishState": "published"
         },
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "### Windmill is installed \ud83c\udf89\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings \u2192 Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill (standalone: API server + one worker), a **bundled PostgreSQL 16**,\nand nginx \u2014 all managed by supervisor. Everything durable (the database, dependency caches) lives\nunder `/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture \u2014 important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n\u2014 **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
+        "1.0.1": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Standalone mode** — the API server and a worker in one process, fronted by nginx.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "[1.0.1]\n* Bundled PostgreSQL data directory moved to a Cloudron persistentDir (/app/pgdata), excluded from the filesystem backup.\n* Added a logical-dump backup strategy (backupCommand/restoreCommand) using pg_dumpall so backups are consistent — a hot file-copy of a running Postgres data directory is unsafe (torn pages). Existing installs migrate the cluster automatically on first boot.\n* Postgres major-version guard: refuse to start (no silent re-init) if the data directory version does not match the bundled server; documents the pg_upgrade path.\n* Conservative Postgres memory settings (shared_buffers/work_mem) for the shared container memory budget; documented a recommended memory floor.\n\n[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
+                "icon": "file://logo.png",
+                "version": "1.0.1",
+                "upstreamVersion": "1.741.0",
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill (standalone: API server + one worker), a **bundled PostgreSQL 16**,\nand nginx — all managed by supervisor. Everything durable (the database, dependency caches) lives\nunder `/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:0331e53be8eb5aaf48c0366f568bb579d3ac30f4ae0ec6256786eb5f0a6b379d"
+            },
+            "creationDate": "2026-06-27T21:30:00.000Z",
+            "ts": 1782595800000,
+            "publishState": "published"
         },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:5309422254b43297854de707dae03c21100502bab858e9c2f9dfe6bdcdc3a0c4"
-      },
-      "creationDate": "2026-06-27T19:40:00.000Z",
-      "ts": 1782589200000,
-      "publishState": "published"
-    },
-    "1.0.1": {
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs \u2014 with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Standalone mode** \u2014 the API server and a worker in one process, fronted by nginx.\n- **Bundled PostgreSQL** \u2014 Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture \u2014 it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
-        "changelog": "[1.0.1]\n* Bundled PostgreSQL data directory moved to a Cloudron persistentDir (/app/pgdata), excluded from the filesystem backup.\n* Added a logical-dump backup strategy (backupCommand/restoreCommand) using pg_dumpall so backups are consistent \u2014 a hot file-copy of a running Postgres data directory is unsafe (torn pages). Existing installs migrate the cluster automatically on first boot.\n* Postgres major-version guard: refuse to start (no silent re-init) if the data directory version does not match the bundled server; documents the pg_upgrade path.\n* Conservative Postgres memory settings (shared_buffers/work_mem) for the shared container memory budget; documented a recommended memory floor.\n\n[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
-        "icon": "file://logo.png",
-        "version": "1.0.1",
-        "upstreamVersion": "1.741.0",
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
+        "1.0.2": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Standalone mode** — the API server and a worker in one process, fronted by nginx.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "[1.0.2]\n* Add packagerName/packagerUrl to the manifest. Cloudron 9.x rejects a community install when packagerName is empty, so the versions-URL install failed. Metadata-only fix — same application image as 1.0.1.\n\n[1.0.1]\n* Bundled PostgreSQL data directory moved to a Cloudron persistentDir (/app/pgdata), excluded from the filesystem backup.\n* Added a logical-dump backup strategy (backupCommand/restoreCommand) using pg_dumpall so backups are consistent — a hot file-copy of a running Postgres data directory is unsafe (torn pages). Existing installs migrate the cluster automatically on first boot.\n* Postgres major-version guard: refuse to start (no silent re-init) if the data directory version does not match the bundled server; documents the pg_upgrade path.\n* Conservative Postgres memory settings (shared_buffers/work_mem) for the shared container memory budget; documented a recommended memory floor.\n\n[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
+                "icon": "file://logo.png",
+                "version": "1.0.2",
+                "upstreamVersion": "1.741.0",
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill (standalone: API server + one worker), a **bundled PostgreSQL 16**,\nand nginx — all managed by supervisor. Everything durable (the database, dependency caches) lives\nunder `/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design — there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings → Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings → SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. — create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and a worker, all under\none memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory event would take the\ndatabase down with the app. Raise it in the dashboard (Resources) for heavier workloads.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:0331e53be8eb5aaf48c0366f568bb579d3ac30f4ae0ec6256786eb5f0a6b379d"
+            },
+            "creationDate": "2026-06-28T14:30:00.000Z",
+            "ts": 1782657000000,
+            "publishState": "published"
         },
-        "persistentDirs": [
-          "/app/pgdata"
-        ],
-        "backupCommand": "/app/code/backup.sh",
-        "restoreCommand": "/app/code/restore.sh",
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "### Windmill is installed \ud83c\udf89\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings \u2192 Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill (standalone: API server + one worker), a **bundled PostgreSQL 16**,\nand nginx \u2014 all managed by supervisor. Everything durable (the database, dependency caches) lives\nunder `/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture \u2014 important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n\u2014 **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
+        "1.1.0": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** — a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "[1.1.0]\n* Topology: run Windmill as a dedicated API/UI server process plus one or more dedicated worker processes under supervisor, instead of MODE=standalone (which upstream supports for development only, with NUM_WORKERS pinned to 1). This is the same server/worker split Windmill ships in its docker-compose, co-located in the single Cloudron container.\n* Worker count scales with the app's memory limit (Cloudron → Resources): more memory means more worker processes, sized to leave headroom for PostgreSQL and the server. Override with the WINDMILL_WORKER_COUNT environment variable.\n* No data, settings, or credentials change; existing installs keep their database and caches and migrate in place. Security posture is unchanged — native jobs run in the app's trust boundary; nsjail / PID-namespace isolation remain unavailable under Cloudron's unprivileged container.\n\n[1.0.2]\n* Add packagerName/packagerUrl to the manifest. Cloudron 9.x rejects a community install when packagerName is empty, so the versions-URL install failed. Metadata-only fix — same application image as 1.0.1.\n\n[1.0.1]\n* Bundled PostgreSQL data directory moved to a Cloudron persistentDir (/app/pgdata), excluded from the filesystem backup.\n* Added a logical-dump backup strategy (backupCommand/restoreCommand) using pg_dumpall so backups are consistent — a hot file-copy of a running Postgres data directory is unsafe (torn pages). Existing installs migrate the cluster automatically on first boot.\n* Postgres major-version guard: refuse to start (no silent re-init) if the data directory version does not match the bundled server; documents the pg_upgrade path.\n* Conservative Postgres memory settings (shared_buffers/work_mem) for the shared container memory budget; documented a recommended memory floor.\n\n[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
+                "icon": "file://logo.png",
+                "version": "1.1.0",
+                "upstreamVersion": "1.741.0",
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx — all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design — there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings → Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings → SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. — create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory → more parallel jobs), leaving the\ndatabase its headroom — so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:da3384d18792b4584bc0ecae1dc53f5185948a394c6c5a4c8a214512894143ca"
+            },
+            "creationDate": "2026-06-28T17:46:36.000Z",
+            "ts": 1782668796000,
+            "publishState": "published"
         },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:0331e53be8eb5aaf48c0366f568bb579d3ac30f4ae0ec6256786eb5f0a6b379d"
-      },
-      "creationDate": "2026-06-27T21:30:00.000Z",
-      "ts": 1782595800000,
-      "publishState": "published"
-    },
-    "1.0.2": {
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs \u2014 with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Standalone mode** \u2014 the API server and a worker in one process, fronted by nginx.\n- **Bundled PostgreSQL** \u2014 Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture \u2014 it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
-        "changelog": "[1.0.2]\n* Add packagerName/packagerUrl to the manifest. Cloudron 9.x rejects a community install when packagerName is empty, so the versions-URL install failed. Metadata-only fix \u2014 same application image as 1.0.1.\n\n[1.0.1]\n* Bundled PostgreSQL data directory moved to a Cloudron persistentDir (/app/pgdata), excluded from the filesystem backup.\n* Added a logical-dump backup strategy (backupCommand/restoreCommand) using pg_dumpall so backups are consistent \u2014 a hot file-copy of a running Postgres data directory is unsafe (torn pages). Existing installs migrate the cluster automatically on first boot.\n* Postgres major-version guard: refuse to start (no silent re-init) if the data directory version does not match the bundled server; documents the pg_upgrade path.\n* Conservative Postgres memory settings (shared_buffers/work_mem) for the shared container memory budget; documented a recommended memory floor.\n\n[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
-        "icon": "file://logo.png",
-        "version": "1.0.2",
-        "upstreamVersion": "1.741.0",
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
+        "1.1.1": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** — maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) — not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** — a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "* Documentation/metadata only (same application image as 1.1.0). Label the package clearly as an unofficial community package — not affiliated with or endorsed by Windmill Labs — and scoped as a single-node, small-team deployment. No functional change.\n",
+                "icon": "file://logo.png",
+                "version": "1.1.1",
+                "upstreamVersion": "1.741.0",
+                "tags": [
+                    "automation",
+                    "workflow",
+                    "developer",
+                    "scripts"
+                ],
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx — all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design — there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings → Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings → SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. — create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory → more parallel jobs), leaving the\ndatabase its headroom — so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:da3384d18792b4584bc0ecae1dc53f5185948a394c6c5a4c8a214512894143ca"
+            },
+            "creationDate": "2026-06-28T18:36:34.000Z",
+            "ts": 1785425760000,
+            "publishState": "published"
         },
-        "persistentDirs": [
-          "/app/pgdata"
-        ],
-        "backupCommand": "/app/code/backup.sh",
-        "restoreCommand": "/app/code/restore.sh",
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "### Windmill is installed \ud83c\udf89\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings \u2192 Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill (standalone: API server + one worker), a **bundled PostgreSQL 16**,\nand nginx \u2014 all managed by supervisor. Everything durable (the database, dependency caches) lives\nunder `/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture \u2014 important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n\u2014 **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design \u2014 there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings \u2192 Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings \u2192 SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. \u2014 create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and a worker, all under\none memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory event would take the\ndatabase down with the app. Raise it in the dashboard (Resources) for heavier workloads.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "packagerName": "OrcVole",
-        "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
+        "1.1.2": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "<upstream>1.776.0</upstream>\n\n## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** — maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) — not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** — a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "* Upstream Windmill 1.741.0 to 1.776.0 (44 releases). No packaging change: the Cloudron layer copies the same six binaries from the official image, so upstream's own base move (Debian bookworm to trixie) and their build-tool bumps do not reach this image. Includes upstream's fix for an unauthenticated DAP debugger launch bypass.\n* Windmill applies its own schema migrations on boot; 35 new ones land with this bump. Two drop a redundant column each (azure_trigger.email, workspace_settings.deploy_to) after folding the surviving data forward — deploy_to links that could not be converted are preserved in a workspace_deploy_to_unmigrated table rather than discarded.\n",
+                "icon": "file://logo.png",
+                "version": "1.1.2",
+                "upstreamVersion": "1.776.0",
+                "tags": [
+                    "automation",
+                    "workflow",
+                    "developer",
+                    "scripts"
+                ],
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx — all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design — there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings → Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings → SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. — create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory → more parallel jobs), leaving the\ndatabase its headroom — so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:809c15e47e61e3a1fb558775da0e49fbee8d7910109667dc525ddb7871c13e3a"
+            },
+            "creationDate": "Sun, 02 Aug 2026 19:48:13 GMT",
+            "ts": 1785700093000,
+            "publishState": "published"
         },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:0331e53be8eb5aaf48c0366f568bb579d3ac30f4ae0ec6256786eb5f0a6b379d"
-      },
-      "creationDate": "2026-06-28T14:30:00.000Z",
-      "ts": 1782657000000,
-      "publishState": "published"
-    },
-    "1.1.0": {
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs \u2014 with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** \u2014 a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** \u2014 Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture \u2014 it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
-        "changelog": "[1.1.0]\n* Topology: run Windmill as a dedicated API/UI server process plus one or more dedicated worker processes under supervisor, instead of MODE=standalone (which upstream supports for development only, with NUM_WORKERS pinned to 1). This is the same server/worker split Windmill ships in its docker-compose, co-located in the single Cloudron container.\n* Worker count scales with the app's memory limit (Cloudron \u2192 Resources): more memory means more worker processes, sized to leave headroom for PostgreSQL and the server. Override with the WINDMILL_WORKER_COUNT environment variable.\n* No data, settings, or credentials change; existing installs keep their database and caches and migrate in place. Security posture is unchanged \u2014 native jobs run in the app's trust boundary; nsjail / PID-namespace isolation remain unavailable under Cloudron's unprivileged container.\n\n[1.0.2]\n* Add packagerName/packagerUrl to the manifest. Cloudron 9.x rejects a community install when packagerName is empty, so the versions-URL install failed. Metadata-only fix \u2014 same application image as 1.0.1.\n\n[1.0.1]\n* Bundled PostgreSQL data directory moved to a Cloudron persistentDir (/app/pgdata), excluded from the filesystem backup.\n* Added a logical-dump backup strategy (backupCommand/restoreCommand) using pg_dumpall so backups are consistent \u2014 a hot file-copy of a running Postgres data directory is unsafe (torn pages). Existing installs migrate the cluster automatically on first boot.\n* Postgres major-version guard: refuse to start (no silent re-init) if the data directory version does not match the bundled server; documents the pg_upgrade path.\n* Conservative Postgres memory settings (shared_buffers/work_mem) for the shared container memory budget; documented a recommended memory floor.\n\n[1.0.0]\n* Initial release of Windmill for Cloudron.\n* Windmill Community Edition 1.741.0, official binary used unmodified.\n* Single container: Windmill standalone (server + worker) + bundled PostgreSQL 16 + nginx, under supervisor.\n* All state under /app/data (PostgreSQL data, dependency caches), captured by Cloudron backups.\n* Outgoing email wired to the Cloudron sendmail addon.\n* Languages out of the box: Python (uv), TypeScript (Deno/Bun), Go, Bash, SQL.\n* App-native authentication; optionalSso.\n",
-        "icon": "file://logo.png",
-        "version": "1.1.0",
-        "upstreamVersion": "1.741.0",
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
+        "1.1.3": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "<upstream>1.777.1</upstream>\n\n## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** — maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) — not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** — a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "* Upstream Windmill 1.776.0 to 1.777.1 (3 releases). Fixes include sandboxed-container job results\n  (result.json/stdout) returning correctly again, and a vite revert that stops random 500 error\n  pages in the UI. Features: a dedicated dbt editor with a refreshed model graph, session recording\n  in app dev, and an on-behalf-of badge on script/flow pages.\n* One schema migration lands with this bump (dbt editor preview graphs): it relaxes a NOT NULL so\n  editor-buffer graphs can exist without a deployed version, and adds versioned/editor indexes.\n  Applied automatically on first boot, as usual.\n",
+                "icon": "file://logo.png",
+                "version": "1.1.3",
+                "upstreamVersion": "1.777.1",
+                "tags": [
+                    "automation",
+                    "workflow",
+                    "developer",
+                    "scripts"
+                ],
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx — all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design — there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings → Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings → SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. — create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory → more parallel jobs), leaving the\ndatabase its headroom — so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:a8b2f80b29455645f6e41b678cac262e2f52801c582f311b168ee6c107fc47f1"
+            },
+            "creationDate": "Mon, 03 Aug 2026 13:21:53 GMT",
+            "ts": 1785763313000,
+            "publishState": "published"
         },
-        "persistentDirs": [
-          "/app/pgdata"
-        ],
-        "backupCommand": "/app/code/backup.sh",
-        "restoreCommand": "/app/code/restore.sh",
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "### Windmill is installed \ud83c\udf89\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings \u2192 Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx \u2014 all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture \u2014 important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n\u2014 **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design \u2014 there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings \u2192 Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings \u2192 SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. \u2014 create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory \u2192 more parallel jobs), leaving the\ndatabase its headroom \u2014 so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "packagerName": "OrcVole",
-        "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
+        "1.1.4": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "<upstream>1.777.1</upstream>\n\n## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** — maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) — not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** — a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "* Upstream Windmill 1.777.1 to 1.782.0 (6 releases). Adds Azure Workload Identity support for\n  mssql and postgres connections, and improved database authentication logging. Removes the tag\n  management UI and app staticOutputs.\n* One schema migration lands with this bump (workspace_diff_last_event). Verified over a populated\n  store: 621 applied migrations became 622, every row count identical before and after, and a\n  restore from a named backup returned the same data byte for byte.\n* Known divergence, recorded rather than silently adopted: upstream added CA-certificate\n  auto-registration and an INIT_SCRIPT pre-flight hook to its own entrypoint. This package's\n  start.sh carries neither.\n",
+                "icon": "file://logo.png",
+                "version": "1.1.4",
+                "upstreamVersion": "1.782.0",
+                "tags": [
+                    "automation",
+                    "workflow",
+                    "developer",
+                    "scripts"
+                ],
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx — all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n### Backups and restores — please read once\n\nYour workflows, scripts, jobs and settings all live in the bundled PostgreSQL, and they are fully\nbacked up: at backup time the app writes a consistent logical dump of the database into the backed-up\nfolder, rather than file-copying a live data directory (which would risk a torn copy).\n\n**One consequence is worth knowing before you need it. An in-place restore does not roll the database\nback.** Restoring this app in place brings back the backed-up files, but the live PostgreSQL data\ndirectory is deliberately preserved as it is — the restore step refuses to overwrite a populated\ndatabase, because a half-replaced database is worse than either version.\n\nSo, to undo a bad update or recover a deleted workflow:\n\n* **Clone the app from the backup** (Cloudron's clone, not restore). A clone starts from an empty\n  data directory, so the dump is replayed in full and you get a true point-in-time copy — verified\n  2026-08-03: a clone taken from a pre-update backup came back with the exact pre-update schema and\n  job history.\n* Then move the domain over, or copy what you need out of the clone.\n\nAn in-place restore is still the right tool for rolling back a *configuration* change, or for\nrecovering an app whose database is intact.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design — there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings → Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings → SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. — create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory → more parallel jobs), leaving the\ndatabase its headroom — so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:c537cfa3c9f4c6c929ea33b99fbe653bb4c042a43b0ba8bf60f532102d7c6881"
+            },
+            "creationDate": "Fri, 07 Aug 2026 13:25:06 GMT",
+            "ts": 1786109106000,
+            "publishState": "published"
         },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:da3384d18792b4584bc0ecae1dc53f5185948a394c6c5a4c8a214512894143ca"
-      },
-      "creationDate": "2026-06-28T17:46:36.000Z",
-      "ts": 1782668796000,
-      "publishState": "published"
-    },
-    "1.1.1": {
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs \u2014 with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** \u2014 maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) \u2014 not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** \u2014 a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** \u2014 Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture \u2014 it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
-        "changelog": "* Documentation/metadata only (same application image as 1.1.0). Label the package clearly as an unofficial community package \u2014 not affiliated with or endorsed by Windmill Labs \u2014 and scoped as a single-node, small-team deployment. No functional change.\n",
-        "icon": "file://logo.png",
-        "version": "1.1.1",
-        "upstreamVersion": "1.741.0",
-        "tags": [
-          "automation",
-          "workflow",
-          "developer",
-          "scripts"
-        ],
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
+        "1.1.5": {
+            "creationDate": "Sat, 08 Aug 2026 11:39:56 GMT",
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "file://DESCRIPTION.md",
+                "changelog": "* Upstream Windmill 1.782.0 to 1.783.0. Thirteen commits, no database migrations.\n* New user-visible feature: an opt-in public sharing option for job pages, guarded by\n  Windmill's own authentication layer and shipped with new read-auth tests upstream. Sharing\n  remains off unless a user enables it per job page.\n* Fixes include scoping a forked workspace's cloned app policy and custom path to its creator.\n* Package validation: full survival leg on staging (install 1.1.4 from the published feed,\n  update over live data, restore from a named backup, data byte-identical at every stage) and\n  the running binary verified to report v1.783.0 after deploy.\n# Changelog\n",
+                "icon": "file://logo.png",
+                "version": "1.1.5",
+                "upstreamVersion": "1.783.0",
+                "tags": [
+                    "automation",
+                    "workflow",
+                    "developer",
+                    "scripts"
+                ],
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "file://POSTINSTALL.md",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:edb1ea07e4b9130e7dd9a3ea61234037254f55639b081f3a6bd4e4fc3792f216"
+            },
+            "publishState": "published",
+            "ts": 1786189196555
         },
-        "persistentDirs": [
-          "/app/pgdata"
-        ],
-        "backupCommand": "/app/code/backup.sh",
-        "restoreCommand": "/app/code/restore.sh",
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "### Windmill is installed \ud83c\udf89\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings \u2192 Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx \u2014 all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture \u2014 important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n\u2014 **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design \u2014 there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings \u2192 Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings \u2192 SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. \u2014 create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory \u2192 more parallel jobs), leaving the\ndatabase its headroom \u2014 so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "packagerName": "OrcVole",
-        "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
-        },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:da3384d18792b4584bc0ecae1dc53f5185948a394c6c5a4c8a214512894143ca"
-      },
-      "creationDate": "2026-06-28T18:36:34.000Z",
-      "ts": 1785425760000,
-      "publishState": "published"
-    },
-    "1.1.2": {
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "<upstream>1.776.0</upstream>\n\n## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs \u2014 with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** \u2014 maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) \u2014 not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** \u2014 a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** \u2014 Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture \u2014 it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
-        "changelog": "* Upstream Windmill 1.741.0 to 1.776.0 (44 releases). No packaging change: the Cloudron layer copies the same six binaries from the official image, so upstream's own base move (Debian bookworm to trixie) and their build-tool bumps do not reach this image. Includes upstream's fix for an unauthenticated DAP debugger launch bypass.\n* Windmill applies its own schema migrations on boot; 35 new ones land with this bump. Two drop a redundant column each (azure_trigger.email, workspace_settings.deploy_to) after folding the surviving data forward \u2014 deploy_to links that could not be converted are preserved in a workspace_deploy_to_unmigrated table rather than discarded.\n",
-        "icon": "file://logo.png",
-        "version": "1.1.2",
-        "upstreamVersion": "1.776.0",
-        "tags": [
-          "automation",
-          "workflow",
-          "developer",
-          "scripts"
-        ],
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
-        },
-        "persistentDirs": [
-          "/app/pgdata"
-        ],
-        "backupCommand": "/app/code/backup.sh",
-        "restoreCommand": "/app/code/restore.sh",
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "### Windmill is installed \ud83c\udf89\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings \u2192 Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx \u2014 all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture \u2014 important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n\u2014 **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design \u2014 there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings \u2192 Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings \u2192 SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. \u2014 create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory \u2192 more parallel jobs), leaving the\ndatabase its headroom \u2014 so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "packagerName": "OrcVole",
-        "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
-        },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:809c15e47e61e3a1fb558775da0e49fbee8d7910109667dc525ddb7871c13e3a"
-      },
-      "creationDate": "Sun, 02 Aug 2026 19:48:13 GMT",
-      "ts": 1785700093000,
-      "publishState": "published"
-    },
-    "1.1.3": {
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "<upstream>1.777.1</upstream>\n\n## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs \u2014 with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** \u2014 maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) \u2014 not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** \u2014 a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** \u2014 Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture \u2014 it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
-        "changelog": "* Upstream Windmill 1.776.0 to 1.777.1 (3 releases). Fixes include sandboxed-container job results\n  (result.json/stdout) returning correctly again, and a vite revert that stops random 500 error\n  pages in the UI. Features: a dedicated dbt editor with a refreshed model graph, session recording\n  in app dev, and an on-behalf-of badge on script/flow pages.\n* One schema migration lands with this bump (dbt editor preview graphs): it relaxes a NOT NULL so\n  editor-buffer graphs can exist without a deployed version, and adds versioned/editor indexes.\n  Applied automatically on first boot, as usual.\n",
-        "icon": "file://logo.png",
-        "version": "1.1.3",
-        "upstreamVersion": "1.777.1",
-        "tags": [
-          "automation",
-          "workflow",
-          "developer",
-          "scripts"
-        ],
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
-        },
-        "persistentDirs": [
-          "/app/pgdata"
-        ],
-        "backupCommand": "/app/code/backup.sh",
-        "restoreCommand": "/app/code/restore.sh",
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "### Windmill is installed \ud83c\udf89\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings \u2192 Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx \u2014 all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n**Security posture \u2014 important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n\u2014 **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design \u2014 there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings \u2192 Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings \u2192 SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. \u2014 create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory \u2192 more parallel jobs), leaving the\ndatabase its headroom \u2014 so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "packagerName": "OrcVole",
-        "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
-        },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:a8b2f80b29455645f6e41b678cac262e2f52801c582f311b168ee6c107fc47f1"
-      },
-      "creationDate": "Mon, 03 Aug 2026 13:21:53 GMT",
-      "ts": 1785763313000,
-      "publishState": "published"
-    },
-    "1.1.4": {
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "<upstream>1.777.1</upstream>\n\n## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs \u2014 with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** \u2014 maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) \u2014 not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** \u2014 a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** \u2014 Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture \u2014 it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
-        "changelog": "* Upstream Windmill 1.777.1 to 1.782.0 (6 releases). Adds Azure Workload Identity support for\n  mssql and postgres connections, and improved database authentication logging. Removes the tag\n  management UI and app staticOutputs.\n* One schema migration lands with this bump (workspace_diff_last_event). Verified over a populated\n  store: 621 applied migrations became 622, every row count identical before and after, and a\n  restore from a named backup returned the same data byte for byte.\n* Known divergence, recorded rather than silently adopted: upstream added CA-certificate\n  auto-registration and an INIT_SCRIPT pre-flight hook to its own entrypoint. This package's\n  start.sh carries neither.\n",
-        "icon": "file://logo.png",
-        "version": "1.1.4",
-        "upstreamVersion": "1.782.0",
-        "tags": [
-          "automation",
-          "workflow",
-          "developer",
-          "scripts"
-        ],
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
-        },
-        "persistentDirs": [
-          "/app/pgdata"
-        ],
-        "backupCommand": "/app/code/backup.sh",
-        "restoreCommand": "/app/code/restore.sh",
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "### Windmill is installed \ud83c\udf89\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings \u2192 Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx \u2014 all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n### Backups and restores \u2014 please read once\n\nYour workflows, scripts, jobs and settings all live in the bundled PostgreSQL, and they are fully\nbacked up: at backup time the app writes a consistent logical dump of the database into the backed-up\nfolder, rather than file-copying a live data directory (which would risk a torn copy).\n\n**One consequence is worth knowing before you need it. An in-place restore does not roll the database\nback.** Restoring this app in place brings back the backed-up files, but the live PostgreSQL data\ndirectory is deliberately preserved as it is \u2014 the restore step refuses to overwrite a populated\ndatabase, because a half-replaced database is worse than either version.\n\nSo, to undo a bad update or recover a deleted workflow:\n\n* **Clone the app from the backup** (Cloudron's clone, not restore). A clone starts from an empty\n  data directory, so the dump is replayed in full and you get a true point-in-time copy \u2014 verified\n  2026-08-03: a clone taken from a pre-update backup came back with the exact pre-update schema and\n  job history.\n* Then move the domain over, or copy what you need out of the clone.\n\nAn in-place restore is still the right tool for rolling back a *configuration* change, or for\nrecovering an app whose database is intact.\n\n**Security posture \u2014 important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n\u2014 **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design \u2014 there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings \u2192 Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings \u2192 SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. \u2014 create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory \u2192 more parallel jobs), leaving the\ndatabase its headroom \u2014 so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "packagerName": "OrcVole",
-        "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
-        },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:c537cfa3c9f4c6c929ea33b99fbe653bb4c042a43b0ba8bf60f532102d7c6881"
-      },
-      "creationDate": "Fri, 07 Aug 2026 13:25:06 GMT",
-      "ts": 1786109106000,
-      "publishState": "published"
-    },
-    "1.1.5": {
-      "creationDate": "Sat, 08 Aug 2026 11:39:56 GMT",
-      "manifest": {
-        "id": "io.github.orcvole.windmill",
-        "title": "Windmill",
-        "author": "OrcVole",
-        "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
-        "description": "file://DESCRIPTION.md",
-        "changelog": "* Upstream Windmill 1.782.0 to 1.783.0. Thirteen commits, no database migrations.\n* New user-visible feature: an opt-in public sharing option for job pages, guarded by\n  Windmill's own authentication layer and shipped with new read-auth tests upstream. Sharing\n  remains off unless a user enables it per job page.\n* Fixes include scoping a forked workspace's cloned app policy and custom path to its creator.\n* Package validation: full survival leg on staging (install 1.1.4 from the published feed,\n  update over live data, restore from a named backup, data byte-identical at every stage) and\n  the running binary verified to report v1.783.0 after deploy.\n# Changelog\n",
-        "icon": "file://logo.png",
-        "version": "1.1.5",
-        "upstreamVersion": "1.783.0",
-        "tags": [
-          "automation",
-          "workflow",
-          "developer",
-          "scripts"
-        ],
-        "healthCheckPath": "/health",
-        "httpPort": 8000,
-        "addons": {
-          "localstorage": {},
-          "sendmail": {
-            "supportsDisplayName": true
-          }
-        },
-        "persistentDirs": [
-          "/app/pgdata"
-        ],
-        "backupCommand": "/app/code/backup.sh",
-        "restoreCommand": "/app/code/restore.sh",
-        "manifestVersion": 2,
-        "memoryLimit": 3221225472,
-        "configurePath": "/",
-        "optionalSso": true,
-        "postInstallMessage": "file://POSTINSTALL.md",
-        "documentationUrl": "https://www.windmill.dev/docs/intro",
-        "website": "https://www.windmill.dev",
-        "contactEmail": "orcvole@users.noreply.github.com",
-        "packagerName": "OrcVole",
-        "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
-        "minBoxVersion": "9.1.0",
-        "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
-        "mediaLinks": [
-          "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
-        ],
-        "checklist": {
-          "changeAdminPassword": {
-            "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
-          }
-        },
-        "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:edb1ea07e4b9130e7dd9a3ea61234037254f55639b081f3a6bd4e4fc3792f216"
-      },
-      "publishState": "published",
-      "ts": 1786189196555
+        "1.1.6": {
+            "manifest": {
+                "id": "io.github.orcvole.windmill",
+                "title": "Windmill",
+                "author": "OrcVole",
+                "tagline": "Turn scripts into workflows, schedules, webhooks and UIs",
+                "description": "<upstream>1.792.2</upstream>\n\n## Windmill\n\nWindmill is an open-source developer platform and workflow engine. Turn scripts in\n**Python, TypeScript, Go, Bash and SQL** into shareable webhooks, scheduled jobs, multi-step\nflows, and auto-generated internal UIs — with a fast editor, a job queue, secrets/variables,\napproval steps and granular permissions, all backed by PostgreSQL.\n\n**Unofficial community package** — maintained by its packager, **not affiliated with, endorsed by, or\nsupported by Windmill Labs**. It runs the official Windmill Community Edition binary, unmodified, and\nis scoped as a **single-node, small-team** deployment (the server and worker processes co-located in\none container, workers scaled by memory) — not a replacement for a horizontally-scaled, multi-node\nWindmill.\n\nThis package runs the official **Windmill Community Edition** binary, unmodified, in a single\nCloudron container:\n\n- **Server + workers** — a dedicated API/UI server process plus one or more worker processes (the same split Windmill runs in production), co-located in the one container and fronted by nginx. The worker count scales with the memory you give the app.\n- **Bundled PostgreSQL** — Windmill needs superuser-grade database privileges (it creates roles\n  with `BYPASSRLS` and the `uuid-ossp` extension), so the package ships its own PostgreSQL 16 with\n  all data under `/app/data`, captured by Cloudron's backups. (The shared `postgresql` addon cannot\n  grant those privileges.)\n- **Outgoing email** via the Cloudron mail addon.\n- **App-native login** (Windmill's own users), optional Cloudron SSO not required.\n\n### Languages and runtimes included\n\nPython (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches\npersist under `/app/data`.\n\n### Security posture (read this)\n\nCloudron runs the container **unprivileged with a read-only root filesystem**, so Windmill's\nnsjail / PID-namespace sandboxing and Docker-in-Docker container steps are **not** available.\nNative jobs (Python/TS/Go/Bash/SQL) run within the app's own trust boundary. This is the normal\nsingle-tenant, **trusted-author** self-host posture — it is **not** suitable for executing\nuntrusted or multi-tenant code.\n\nEnterprise-only features of Windmill are not enabled.\n",
+                "changelog": "* Windmill 1.792.2 (from 1.783.0), thirteen upstream releases\n* Security: ansible git repository URLs are validated before git is invoked (1.792.2)\n* Schema: 1.790.0 adds a `trigger_history` table with source tracking, so this update carries a database migration\n* No breaking changes and no environment variable, config path or port changes across the span\n",
+                "icon": "file://logo.png",
+                "version": "1.1.6",
+                "upstreamVersion": "1.792.2",
+                "tags": [
+                    "automation",
+                    "workflow",
+                    "developer",
+                    "scripts"
+                ],
+                "healthCheckPath": "/health",
+                "httpPort": 8000,
+                "addons": {
+                    "localstorage": {},
+                    "sendmail": {
+                        "supportsDisplayName": true
+                    }
+                },
+                "persistentDirs": [
+                    "/app/pgdata"
+                ],
+                "backupCommand": "/app/code/backup.sh",
+                "restoreCommand": "/app/code/restore.sh",
+                "manifestVersion": 2,
+                "memoryLimit": 3221225472,
+                "configurePath": "/",
+                "optionalSso": true,
+                "postInstallMessage": "### Windmill is installed 🎉\n\n**First login**\n\nSign in with the default superadmin and **change the password immediately**:\n\n* Email: `admin@windmill.dev`\n* Password: `changeme`\n\nChange it under **Settings → Users**. Then create your first workspace and invite users (or wire up\nSSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot\nand cannot be pre-seeded, so changing them is your first task.\n\n**What this package runs**\n\nA single container with Windmill running as a dedicated API/UI server process plus one or more worker\nprocesses (the same server/worker split Windmill runs in production, co-located here), a **bundled\nPostgreSQL 16**, and nginx — all managed by supervisor. The number of worker processes scales with the\nmemory you allocate to the app. Everything durable (the database, dependency caches) lives under\n`/app/data` and is included in Cloudron backups.\n\n**Languages**: Python, TypeScript (Deno/Bun), Go, Bash and SQL work out of the box. The first job in\na language may take a little longer while its runtime/dependencies are fetched and cached.\n\n### Backups and restores — please read once\n\nYour workflows, scripts, jobs and settings all live in the bundled PostgreSQL, and they are fully\nbacked up: at backup time the app writes a consistent logical dump of the database into the backed-up\nfolder, rather than file-copying a live data directory (which would risk a torn copy).\n\n**One consequence is worth knowing before you need it. An in-place restore does not roll the database\nback.** Restoring this app in place brings back the backed-up files, but the live PostgreSQL data\ndirectory is deliberately preserved as it is — the restore step refuses to overwrite a populated\ndatabase, because a half-replaced database is worse than either version.\n\nSo, to undo a bad update or recover a deleted workflow:\n\n* **Clone the app from the backup** (Cloudron's clone, not restore). A clone starts from an empty\n  data directory, so the dump is replayed in full and you get a true point-in-time copy — verified\n  2026-08-03: a clone taken from a pre-update backup came back with the exact pre-update schema and\n  job history.\n* Then move the domain over, or copy what you need out of the clone.\n\nAn in-place restore is still the right tool for rolling back a *configuration* change, or for\nrecovering an app whose database is intact.\n\n**Security posture — important**\n\nCloudron runs apps unprivileged with a read-only root filesystem. Therefore Windmill's **nsjail /\nPID-namespace sandboxing and Docker-based \"container step\" jobs are not available**. Native jobs run\nwithin the app's own trust boundary. This is the standard single-tenant, **trusted-author** posture\n— **do not** use it to run untrusted or multi-tenant code.\n\n**Email**: outgoing mail is wired to the Cloudron mail addon automatically. You can override SMTP in\nWindmill's instance settings if you prefer.\n\n**Users, login and SSO**\n\nThe login page shows **email/password only** by design — there are no SSO buttons until you configure\nan OAuth/OIDC provider, and there is no public self-signup because Windmill is **invite-only** by\ndefault. This is expected, not a fault.\n\n- **Add users**: as the superadmin, go to the instance settings → Users (or add members inside a\n  workspace). Optionally enable self-registration / an auto-invite email domain in the instance\n  settings.\n- **Enable SSO**: configure an OAuth/OIDC provider in Windmill's instance settings (Settings → SSO/\n  OAuth). Windmill works with Keycloak, Authelia, Google, GitHub, etc. — create a client in your IdP\n  and paste the client id/secret/issuer. (Automatic wiring of the Cloudron `oidc` addon is a planned\n  follow-up; for now configure the provider directly.)\n- **Avoid lockout**: create a **second superadmin** so a single lost password isn't a lockout. As a\n  last resort, the superadmin password can be reset from the database via `cloudron exec`.\n\n**Memory**: this app bundles its own PostgreSQL alongside the Windmill server and its worker\nprocesses, all under one memory limit. Keep it at **3 GB or more** (2 GB floor); an out-of-memory\nevent would take the database down with the app. **Raising the memory limit in the dashboard\n(Resources) automatically adds worker processes** (more memory → more parallel jobs), leaving the\ndatabase its headroom — so it's the single knob for capacity. Advanced operators can pin the count\nwith the `WINDMILL_WORKER_COUNT` environment variable.\n\n**Webhooks / base URL**: Windmill generates webhook URLs from its base URL, set to this app's origin.\nIf you change the app's domain, update the base URL in Windmill's instance settings.\n",
+                "documentationUrl": "https://www.windmill.dev/docs/intro",
+                "website": "https://www.windmill.dev",
+                "contactEmail": "orcvole@users.noreply.github.com",
+                "packagerName": "OrcVole",
+                "packagerUrl": "https://github.com/OrcVole/windmill-cloudron",
+                "minBoxVersion": "9.1.0",
+                "iconUrl": "https://raw.githubusercontent.com/OrcVole/windmill-cloudron/main/logo.png",
+                "mediaLinks": [
+                    "https://www.windmill.dev/img/painless_scripts_to_workflows.png"
+                ],
+                "checklist": {
+                    "changeAdminPassword": {
+                        "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings → Users)."
+                    }
+                },
+                "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:13762445a5ac947bb45a7779ab5b6544a86381ca25bf6fcf515f43866df2e6da"
+            },
+            "creationDate": "Wed, 19 Aug 2026 18:41:06 GMT",
+            "ts": 1787164866000,
+            "publishState": "published"
+        }
     }
-  }
 }
