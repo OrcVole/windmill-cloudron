@@ -31,6 +31,7 @@ Refined from the foundation brief after Phase 0 ground-truthing. Effort tags per
 ## Remaining work (next actions)
 
 ### Phase 4 — live deploy + validation — **max**
+
 - Publish the image (GHCR) and install on a Windmill subdomain, OR build on the box.
 - On-box: log in, change the superadmin password, create a workspace, run a script in **each**
   language (Python/TS/Go/Bash/SQL), build a flow, set a schedule, fire a **webhook** (verifies
@@ -38,28 +39,34 @@ Refined from the foundation brief after Phase 0 ground-truthing. Effort tags per
 - Confirm the security posture empirically (Docker-step job fails; native jobs run).
 
 ### Phase 5 — integration — **high**
+
 - From a Windmill script, reach sibling apps over HTTPS (qdrant, tei, docling, langfuse,
   agentgateway, rustfs, ollama, and the **bge reranker**).
 - Wire one concrete proof pipeline (e.g. docling → tei embeddings → qdrant; rerank via the bge
   reranker) and/or Windmill AI → agentgateway as an OpenAI-compatible endpoint.
 
 ### Phase 6 — backup/restore — **max**
+
 - `cloudron backup create` → `cloudron restore` (net-zero) on a throwaway: state survives, entrypoint
   takes the "existing" path (no reseed), ownership/modes re-asserted.
 - Destroy + restore into a fresh install; verify full recovery.
 
 ### Phase 7 — update — **max**
+
 - `cloudron update` to a new package build: migrations run clean, data preserved, topology holds.
 - Make the migration a standing gate; script the single-`ARG` version bump.
 
 ### Phase 8 — hardening — **max**
+
 - Walk field guide §11 + Cloudron skills checklist; resource limits; ~60 s proxy-timeout mitigation;
   cookie/CORS/`BASE_URL` correctness.
 
 ### Phase 9 — release — **high**
+
 - `CloudronVersions.json` (inlined manifest, registry digest, valid contactEmail, non-empty iconUrl,
   ≥1 mediaLinks, bracket changelog). Stranger-install gate. Tag + push to GitHub (OrcVole) and
   the private Forgejo mirror using the provided tokens (never committed). Lessons-Learned doc.
 
 ### Phase 10 — handoff — **medium**
+
 - Final summary; known limitations; sync GitHub + Forgejo.

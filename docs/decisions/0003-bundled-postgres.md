@@ -18,6 +18,7 @@ Windmill v1.741.0's unmodified CE binary requires **superuser-grade** PostgreSQL
    and no `BYPASSRLS`**, so those roles cannot exist and runtime `SET ROLE` fails.
 
 The only two prior-art ways to use the addon are:
+
 - **Embed PostgreSQL as superuser** (halecraft) — what we do, minus their EE-unlock fork.
 - **Byte-patch the Windmill binary** to neutralise the role/RLS SQL (timconsidine) — which violates
   the Windmill CE license ("distribute as is, do not modify or wrap") **and** our rule #2

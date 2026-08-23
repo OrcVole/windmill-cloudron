@@ -4,11 +4,11 @@
 
 ### Links
 
-- 🏠 Project homepage: https://www.windmill.dev
-- 📦 Upstream repo: https://github.com/windmill-labs/windmill
-- 🧱 Cloudron package repo: https://github.com/OrcVole/windmill-cloudron
+- 🏠 Project homepage: <https://www.windmill.dev>
+- 📦 Upstream repo: <https://github.com/windmill-labs/windmill>
+- 🧱 Cloudron package repo: <https://github.com/OrcVole/windmill-cloudron>
 
-There's a hosted upstream demo at https://app.windmill.dev. The package you install is the self-hosted **Community Edition** — the full app (editor, workers, scheduler, UIs) on your own box, behind your own login.
+There's a hosted upstream demo at <https://app.windmill.dev>. The package you install is the self-hosted **Community Edition** — the full app (editor, workers, scheduler, UIs) on your own box, behind your own login.
 
 ---
 
@@ -95,7 +95,7 @@ A few low-effort things that help packagers a lot:
 - **Read SMTP from the environment as a first-class option** (it already falls back to env when the DB setting is absent) and document it, so platform mail addons map cleanly.
 - **Publish a glibc/Postgres-version floor per release**, so a slim base copy of the binary knows its target.
 
-Package source and PRs welcome here: https://github.com/OrcVole/windmill-cloudron. Happy to co-maintain.
+Package source and PRs welcome here: <https://github.com/OrcVole/windmill-cloudron>. Happy to co-maintain.
 
 ---
 

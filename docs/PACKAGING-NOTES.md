@@ -127,6 +127,7 @@ All VERIFIED on the live Cloudron (anonymized; box hostname omitted per the secr
   should cover it, but confirm on box).
 
 ## Conventions
+
 - One source of version truth: Dockerfile `ARG WINDMILL_VERSION` + pinned `@sha256`. Manifest
   `upstreamVersion` mirrors it; `version` is our package semver.
 - Box-specific facts (real hostnames, private mirror, internal URLs) are **gitignored**; this file
