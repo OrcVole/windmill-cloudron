@@ -4,8 +4,8 @@
 
 Sign in with the default superadmin and **change the password immediately**:
 
-* Email: `admin@windmill.dev`
-* Password: `changeme`
+- Email: `admin@windmill.dev`
+- Password: `changeme`
 
 Change it under **Settings → Users**. Then create your first workspace and invite users (or wire up
 SSO / OAuth in the instance settings). The default credentials are fixed by Windmill on first boot
@@ -35,11 +35,11 @@ database, because a half-replaced database is worse than either version.
 
 So, to undo a bad update or recover a deleted workflow:
 
-* **Clone the app from the backup** (Cloudron's clone, not restore). A clone starts from an empty
+- **Clone the app from the backup** (Cloudron's clone, not restore). A clone starts from an empty
   data directory, so the dump is replayed in full and you get a true point-in-time copy — verified
   2026-08-03: a clone taken from a pre-update backup came back with the exact pre-update schema and
   job history.
-* Then move the domain over, or copy what you need out of the clone.
+- Then move the domain over, or copy what you need out of the clone.
 
 An in-place restore is still the right tool for rolling back a *configuration* change, or for
 recovering an app whose database is intact.

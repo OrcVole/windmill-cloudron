@@ -88,8 +88,8 @@ A few first-run surprises that are **expected behaviour**, not bugs:
 
 ### 🔗 More
 
-- 📦 Package repo & issues: https://github.com/OrcVole/windmill-cloudron
-- 🏠 Windmill docs: https://www.windmill.dev/docs/intro
+- 📦 Package repo & issues: <https://github.com/OrcVole/windmill-cloudron>
+- 🏠 Windmill docs: <https://www.windmill.dev/docs/intro>
 - 📣 Full announcement & feature tour: *(link to the announcement thread)*
 
 Got stuck on the first run? Reply here with what you saw and we'll get you unblocked. 🙌

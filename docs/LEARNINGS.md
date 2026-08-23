@@ -6,6 +6,7 @@ A running log for four audiences, newest first. (a) operators, (b) other package
 ## 2026-06-27
 
 ### (a) For operators
+
 - Windmill here ships its **own bundled PostgreSQL** — you do **not** add the `postgresql` addon. All
   data (database + dependency caches) is under `/app/data` and backed up normally.
 - After install, log in with `admin@windmill.dev` / `changeme` and **change the password first**.
@@ -15,6 +16,7 @@ A running log for four audiences, newest first. (a) operators, (b) other package
   limit adds worker processes automatically** (more memory → more parallel jobs) — it's the capacity knob.
 
 ### (b) For other packagers — backup correctness (1.0.1)
+
 - **A bundled database must NOT rely on Cloudron's filesystem backup.** Cloudron copies `/app/data`
   live and non-atomically; a hot copy of a running Postgres `PGDATA` is consistency-unsafe. Use the
   `persistentDirs` (exclude the live data dir from the file backup) + `backupCommand`/`restoreCommand`
@@ -30,6 +32,7 @@ A running log for four audiences, newest first. (a) operators, (b) other package
   explicit upgrade — guard `PG_VERSION` and fail loud rather than re-initialising over data.
 
 ### (b) For other packagers
+
 - **Bundled PostgreSQL was the unlock.** Windmill needs superuser-grade PG (`CREATE EXTENSION
   uuid-ossp` unguarded, `CREATE ROLE … BYPASSRLS`, runtime `SET ROLE windmill_admin`). The Cloudron
   addon grants none of those. Your only license-clean option (no binary patching) is to bundle PG as
@@ -51,11 +54,13 @@ A running log for four audiences, newest first. (a) operators, (b) other package
 - Image tag is `1.741.0` (no `v`); the git tag `v1.741.0` is not a valid image ref.
 
 ### (c) For Cloudron maintainers
+
 - The `postgresql` addon allowlists `uuid-ossp`, but apps that need `BYPASSRLS`/`CREATEROLE` (Windmill
   for its workspace RLS) still cannot use it. A "privileged database" addon option, or an opt-in
   per-app role-with-BYPASSRLS, would let such apps avoid bundling their own PostgreSQL.
 
 ### (d) For Windmill developers
+
 - The unguarded `CREATE EXTENSION "uuid-ossp"` and `SET ROLE windmill_admin` make CE hard to run on
   managed/least-privilege Postgres. A documented "non-superuser bootstrap" path (pre-create the
   extension/roles, then run migrations as a plain owner) would help every managed-PG deployment, not

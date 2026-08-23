@@ -512,6 +512,7 @@ The load-bearing conventions:
   `--hostname 0.0.0.0` (TEI) or `UVICORN_HOST=0.0.0.0` (Docling).
 - **Cgroup-aware concurrency.** Size thread pools to the container's CPU allotment, not the host's
   `nproc`:
+
   ```bash
   CPUS="$(nproc 2>/dev/null || echo 2)"
   if [[ -r /sys/fs/cgroup/cpu.max ]]; then
@@ -519,6 +520,7 @@ The load-bearing conventions:
     if [[ "${CQ:-max}" != "max" && "${CP:-0}" -gt 0 ]]; then C=$(( CQ / CP )); (( C >= 1 )) && CPUS=$C; fi
   fi
   ```
+
 - **Echo resolved facts, never secrets.** Print the port, cache paths, thread count, and key
   *presence* (`present` / `MISSING`), never the key.
 - **Validate config with the app's own validator before exec** (agentgateway runs `--validate-only`, and
@@ -801,6 +803,7 @@ were announced but are not reliably present; do not depend on them.
 `https://`), `CLOUDRON_API_ORIGIN`, `CLOUDRON_PROXY_IP`. Addon env follows `CLOUDRON_<ADDON>_*`.
 
 Read the real memory limit from cgroups at runtime rather than assuming:
+
 ```bash
 mem=$(cat /sys/fs/cgroup/memory.max 2>/dev/null || cat /sys/fs/cgroup/memory/memory.limit_in_bytes)
 ```
