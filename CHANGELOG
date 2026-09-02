@@ -1,3 +1,11 @@
+[1.1.7]
+
+- Update windmill 1.792.2 -> 1.801.0
+- Security: multiple cross-workspace isolation fixes preventing data, code and configuration leakage between workspaces; token scope and lifetime hardening to prevent privilege escalation and unauthorised access; path traversal and input validation fixes on file sync, MCP endpoints and error handler routing
+- Breaking: MCP script tool split into createScript and updateScript; filesystem workspace storage removed from non-debug builds; Slack resource-connect OAuth migrated to v2; service log storage migrated to columnar parquet with day-partitioned index; AI skills are now per-workspace resources requiring explicit selection; ephemeral job token lifetime bounded to job timeout
+- New data model for AI agent evals (datasets, scored runs, comparison); token cost tracking in AI sessions and chats; fork subscription prevention with unified seat counting
+- No packaging changes: auth topology, workspace layout and secrets handling unchanged; base and built images digest-pinned
+
 [1.1.6]
 * Windmill 1.792.2 (from 1.783.0), thirteen upstream releases
 * Security: ansible git repository URLs are validated before git is invoked (1.792.2)
