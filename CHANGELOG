@@ -1,3 +1,14 @@
+[1.2.0]
+
+- Upstream Windmill 1.801.0 to 1.811.1 (148 commits across 11 releases).
+- Database: 15 new migration SQL pairs, including surrogate primary keys on five tables for PostgreSQL logical replication support.
+- Auth/security: guest JWT entry for embedded apps, CSRF protection layer, OAuth scope refinements, and expanded permissioned-as functionality.
+- dbt integration: environment state persistence, column lineage ingestion, and snowflake_oauth support on every engine.
+- Worker/native features: native TypeScript fetch bounding, PHP volume mount support, and reorderable S3 permission rules via drag and drop.
+- Observability: OTLP metrics temporality preference and standard OTEL resource attribute environment variables.
+- Frontend: AI session skills enabled by default; login status badge removed from public apps; approval page skin updated.
+- No breaking changes, no upgrade step required, and no new settings detected.
+
 [1.1.7]
 
 - Update windmill 1.792.2 -> 1.801.0
