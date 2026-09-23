@@ -1,4 +1,4 @@
-`<upstream>1.817.0</upstream>
+<upstream>1.817.0</upstream>
 
 ## Windmill
 

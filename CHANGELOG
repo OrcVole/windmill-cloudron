@@ -8,6 +8,7 @@
 - 25 new database migrations, all additive (new tables or columns).
 - Optional new setting WINDMILL_TOKEN_EXPIRATION caps user token lifetime; no action required.
 - No breaking changes, no upgrade step required.
+- Store listing: the screenshot link pointed at an image upstream has since removed from its website, so every earlier listing showed a broken image; screenshots are now hosted in this package's own repository.
 
 [1.2.0]
 

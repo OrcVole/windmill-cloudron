@@ -70,6 +70,17 @@ curl -fsS "${BASE}/api/users/whoami" -H "Authorization: Bearer ${TOKEN}" 2>/dev/
   | grep -q '"super_admin":true' || fail "whoami did not confirm super_admin"
 echo "    login + whoami(super_admin) OK"
 
+# A worker that crash-loops still shows up as a process between restarts, and every check above
+# passes without one. Running a job is the only proof the worker path works; the answer is computed
+# by the worker ($((6*7))), so an echo of the input cannot fake it. Added 2026-09-23 after langfuse's
+# worker crash-looped behind a green smoke test.
+echo "==> smoke: a real job runs through a worker"
+JOB="$(curl -fsS -m 180 -X POST "${BASE}/api/w/admins/jobs/run_wait_result/preview" \
+  -H "Authorization: Bearer ${TOKEN}" -H 'Content-Type: application/json' \
+  -d '{"content":"echo \"smoke-$((6*7))\"","language":"bash","args":{}}' 2>/dev/null || true)"
+echo "$JOB" | grep -q 'smoke-42' || fail "a bash job did not complete through a worker (got: ${JOB:0:200})"
+echo "    bash job computed by a worker OK"
+
 echo "==> smoke: server + worker process split (not standalone)"
 WM_PROCS="$("$ENGINE" exec "$NAME" sh -c 'ps -C windmill -o pid= 2>/dev/null | wc -l' | tr -d '[:space:]')"
 [ "${WM_PROCS:-0}" -ge 2 ] || fail "expected >=2 windmill processes (1 server + >=1 worker); found ${WM_PROCS}"
