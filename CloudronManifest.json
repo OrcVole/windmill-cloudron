@@ -48,5 +48,5 @@
       "message": "Log in with admin@windmill.dev / changeme and immediately change the superadmin password (Settings \u2192 Users)."
     }
   },
-  "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:4fac701ddb0cd4d6973bcdeab430d214d5caba61918f2a4f44ebd9fa3262f07f"
+  "dockerImage": "ghcr.io/orcvole/windmill-cloudron@sha256:375cc3ae0eee37583e98d6a658f196d468eefef821ef825a87241737f2087e80"
 }
