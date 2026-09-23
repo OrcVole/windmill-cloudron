@@ -1,3 +1,14 @@
+[1.3.0]
+
+- Upstream Windmill 1.811.1 to 1.817.0 (six releases over one week).
+- AI sessions: expanded architecture with artifact sharing across sessions and backups to object storage.
+- Data tables: role-based access control (ACLs) for row-level permissions.
+- Auth surface changes: login-link authentication flow, pre-approved cloud accounts, JWT handling updates, and guest token expiration support.
+- Remote deployment from the UI to another Windmill instance.
+- 25 new database migrations, all additive (new tables or columns).
+- Optional new setting WINDMILL_TOKEN_EXPIRATION caps user token lifetime; no action required.
+- No breaking changes, no upgrade step required.
+
 [1.2.0]
 
 - Upstream Windmill 1.801.0 to 1.811.1 (148 commits across 11 releases).
