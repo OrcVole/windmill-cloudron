@@ -115,7 +115,7 @@ the linkage gate (section 4) exists. Full inventory in [Appendix A](#appendix-a-
 
 A package is, at minimum, four files, plus docs that ship with the code:
 
-```
+```text
 Dockerfile                 the build
 start.sh                   the entrypoint
 CloudronManifest.json      the package contract

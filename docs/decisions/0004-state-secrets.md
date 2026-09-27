@@ -22,7 +22,7 @@ bundled PG and also lives under `/app/data`.
 
 ## `/app/data` layout
 
-```
+```text
 /app/data/postgresql/16/      bundled PostgreSQL data directory (all Windmill state)
 /app/data/.secrets/db.env     generated DB superuser password (0600 in a 0700 dir)
 /app/data/cache/uv            uv cache

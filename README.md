@@ -34,7 +34,7 @@ binary, which the Windmill CE license and our packaging rules forbid. See
 
 ## Repository layout
 
-```
+```text
 Dockerfile             cloudron/base final stage; COPY the unmodified CE binary + runtimes
 start.sh               entrypoint: PG bootstrap, env mapping, supervisor handoff
 supervisord.conf       postgres + windmill-server + nginx (worker units generated per-boot)
