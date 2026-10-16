@@ -28,21 +28,11 @@ Your workflows, scripts, jobs and settings all live in the bundled PostgreSQL, a
 backed up: at backup time the app writes a consistent logical dump of the database into the backed-up
 folder, rather than file-copying a live data directory (which would risk a torn copy).
 
-**One consequence is worth knowing before you need it. An in-place restore does not roll the database
-back.** Restoring this app in place brings back the backed-up files, but the live PostgreSQL data
-directory is deliberately preserved as it is — the restore step refuses to overwrite a populated
-database, because a half-replaced database is worse than either version.
-
-So, to undo a bad update or recover a deleted workflow:
-
-- **Clone the app from the backup** (Cloudron's clone, not restore). A clone starts from an empty
-  data directory, so the dump is replayed in full and you get a true point-in-time copy — verified
-  2026-08-03: a clone taken from a pre-update backup came back with the exact pre-update schema and
-  job history.
-- Then move the domain over, or copy what you need out of the clone.
-
-An in-place restore is still the right tool for rolling back a *configuration* change, or for
-recovering an app whose database is intact.
+**A restore rolls the database back** (from package 1.4.0; earlier versions kept the current database,
+so only a clone rolled back). Restoring in place moves the current database aside to
+`/app/pgdata/quarantine-<time>`, kept for 30 days, and rebuilds from the backup's dump. The rebuild is
+checked before the app starts: if it fails, the current database is put back and the restore reports
+an error, so you never end up on a half-restored database. A clone from a backup also works, as before.
 
 **Security posture — important**
 

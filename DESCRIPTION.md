@@ -26,7 +26,7 @@ Cloudron container:
 
 ### Languages and runtimes included
 
-Python (via uv), TypeScript (Deno and Bun), Go, Bash and SQL run out of the box. Dependency caches
+Python (via uv), TypeScript (Bun; Deno for existing scripts, deprecated), Go, Bash and SQL run out of the box. Dependency caches
 persist under `/app/data`.
 
 ### Security posture (read this)

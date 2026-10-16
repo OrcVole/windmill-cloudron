@@ -1,3 +1,21 @@
+[1.4.0]
+
+- Base image cloudron/base 5.1.0 to 6.0.0 (Ubuntu 26.04). The bundled database stays PostgreSQL 16
+  (now 16.15, from the PostgreSQL project's own repository, because Ubuntu 26.04 ships only 18): same
+  major, so existing data is used as it is, with no migration.
+- Upstream Windmill 1.817.0 to 1.837.0 (twenty releases).
+- **Fix: restoring a backup now actually restores your scripts, flows and data.** Until this release an
+  in-place restore (Restore on an existing app) kept the CURRENT database, because it lives in a
+  persistent directory the platform does not roll back; only restoring to a new app (a clone) worked.
+  Every earlier release has this defect. Now a restore moves the current database aside to
+  `/app/pgdata/quarantine-<time>` (kept for 30 days, so nothing is lost) and rebuilds from the backup.
+- **Deno is deprecated. Move your Deno scripts to Bun.** From 1.837 upstream no longer offers Deno for
+  new scripts and ships it only in its full image, and the Deno runtime itself ends development around
+  October 2027 (announced 2026-10-09; monthly security releases until then). This package keeps Deno
+  (2.2.1, unchanged) so existing Deno scripts keep running after this update. A later release, announced
+  here in advance, will remove it.
+- Workspace secrets (#11678) and AI session backups (#11734) are now encrypted with AES-256-GCM.
+
 [1.3.0]
 
 - Upstream Windmill 1.811.1 to 1.817.0 (six releases over one week).
