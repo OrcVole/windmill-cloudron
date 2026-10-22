@@ -4,7 +4,7 @@ A [Cloudron](https://cloudron.io) community package for [Windmill](https://www.w
 the open-source developer platform that turns scripts (Python / TypeScript / Go / Bash / SQL) into
 webhooks, scheduled jobs, multi-step flows and auto-generated UIs.
 
-Pinned to Windmill **Community Edition v1.741.0**, run **unmodified**.
+Pinned to Windmill **Community Edition v1.846.1**, run **unmodified**.
 
 > **Unofficial community package.** Maintained by its packager — **not affiliated with, endorsed by,
 > or supported by [Windmill Labs](https://www.windmill.dev)**. It orchestrates the official Windmill

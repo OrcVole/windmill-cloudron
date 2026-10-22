@@ -1,3 +1,9 @@
+[1.4.1]
+
+- Base image cloudron/base 6.0.0 to 6.0.1: Ubuntu security updates, including the removal of the compromised eMudhra emSign ECC Root CA - G3 from the trusted certificates.
+- Upstream Windmill 1.837.0 to 1.846.1 (nine releases). Fixes confirmed in upstream's notes: AI proxy paths now refuse dot segments (#11837); `delete_jobs` side-table deletes are scoped to the request's workspace (#11836); MCP OAuth callback page escapes inlined JSON (#11880); MCP OAuth grants are revoked on password change and reset (#11908); MCP token references are held to their reference scopes (#11803); incoming Teams activities are verified by their Bot Framework JWT (#11818); restarting a flow past an approval that was never granted is refused (#11920).
+- Upstream features include configurable workspace roles, fork isolation rules, an installable web app, and an MCP endpoint for AI sessions at /api/mcp. The nsjail changes do not apply: this package runs with nsjail off.
+
 [1.4.0]
 
 - Base image cloudron/base 5.1.0 to 6.0.0 (Ubuntu 26.04). The bundled database stays PostgreSQL 16
