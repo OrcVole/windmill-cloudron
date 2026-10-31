@@ -1,3 +1,7 @@
+[1.4.2]
+
+- Upstream Windmill 1.846.1 to 1.855.1 (sixteen releases). Fixes confirmed in upstream's notes: the worker image pins Node.js to 24.22.1 for CVE-2026-111497 (#11995); a variable can be linked to its OAuth account only in the connect flow (#11361). Also in these releases: the MCP OAuth URLs are now built from the API base URL (#12010, #12024). No database migration, removed setting or changed default that this package uses was found in the notes. The MCP endpoint's unauthenticated 401 now advertises protected-resource metadata (`resource_metadata=` and `scope="mcp:all"`) in place of a `resource=` URL, and that metadata no longer lists the `mcp:read_only` and `mcp:read_run` scopes: clients that relied on those scopes should be checked.
+
 [1.4.1]
 
 - Base image cloudron/base 6.0.0 to 6.0.1: Ubuntu security updates, including the removal of the compromised eMudhra emSign ECC Root CA - G3 from the trusted certificates.
