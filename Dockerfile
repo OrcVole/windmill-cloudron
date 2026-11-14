@@ -4,15 +4,15 @@
 # runtimes are COPY'd, unmodified, from the official CE image. PostgreSQL is bundled (the Cloudron
 # postgresql addon cannot grant Windmill the superuser/BYPASSRLS it requires — see docs/decisions/0003).
 
-ARG WINDMILL_VERSION=1.874.0
+ARG WINDMILL_VERSION=1.875.0
 
 # --- source of the unmodified upstream binary + runtimes ---
-FROM ghcr.io/windmill-labs/windmill:1.874.0@sha256:899ed05cc6dbaf067b1525453a8ac2177850824f134616f6553bbaf8f3d0c172 AS windmill
+FROM ghcr.io/windmill-labs/windmill:1.875.0@sha256:1b224f32dcb6e4fdbd74ed935ad42ebe4c0ce8c42ff64f63bd59f1907bcb9da6 AS windmill
 # Deno, DEPRECATED: from 1.837 upstream ships it only in the full image (#11648) and no longer offers it
 # for new scripts, and the Deno runtime itself ends development around October 2027 (announced
 # 2026-10-09). Kept, at the same 2.2.1 as before, so existing installs' Deno scripts keep running
 # after this update. Remove in a later release, announced ahead, once users have moved to Bun.
-FROM ghcr.io/windmill-labs/windmill-full:1.874.0@sha256:d4daf4c30eb7b5652370fb4c79d2a05184ce143beadbc854dfb9feedf7bea0a7 AS windmill-full
+FROM ghcr.io/windmill-labs/windmill-full:1.875.0@sha256:6ca091735a2f57f0afb85140f1b567b34d27a1bee18e27a2d5cb983ead400820 AS windmill-full
 
 # --- the Cloudron app image ---
 FROM docker.io/cloudron/base:6.0.1@sha256:7b1e729960c3ca312d26e886917ba89483241bba0219ff292858e10d9d5768ee

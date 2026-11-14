@@ -1,3 +1,7 @@
+[1.4.4]
+
+- Upstream Windmill 1.874.0 to 1.875.0. A fairness cap's alerts now give its exact start and end (#12438); the fairness reserve becomes a worker group setting shown on the workers page (#12435); long step durations show in hours and minutes on run timelines (#12437); keyboard shortcuts no longer open the home filters over global search (#12439). No database migration in this release, and nothing this package configures changed.
+
 [1.4.3]
 
 - Upstream Windmill 1.855.1 to 1.874.0 (twenty-two releases). Access-control and secrets fixes as written in upstream's notes: forwarded HTTP trigger headers and route resolution are tightened (#12298); MCP OAuth grants are revoked when their token or user goes away (#12282), and API tokens and MCP OAuth grants are revoked on leave_instance (#12430); credential-bearing instance setting values are no longer logged (#12413) and secrets are masked in the instance settings review diff (#12287); updating a native trigger now authorizes the existing runnable (#12197); a hub path named by a member without the code capability is refused (#12381); roles that cannot run are held to read-only over MCP and the AI session (#12357); the usernames `anonymous` and the system names used for jobs and audit logs are reserved (#12146, #12236). The bundled CLI's dependencies are bumped past advisories (#12337).
